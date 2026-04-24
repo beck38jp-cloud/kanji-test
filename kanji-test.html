@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>小学6年生 漢字テスト</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="漢字テスト">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --success: #22c55e;
+      --error: #ef4444;
+      --bg: #f0f9ff;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Meiryo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    }
+    #app { width: 100%; max-width: 640px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 8px; }
+    h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--muted); }
+    .subtitle { text-align: center; color: var(--muted); margin-bottom: 28px; }
+    .mode-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .btn-mode {
+      padding: 20px; border: 2px solid #e2e8f0; border-radius: 12px;
+      background: white; cursor: pointer; text-align: center;
+      font-family: inherit; transition: all 0.15s;
+    }
+    .btn-mode .icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .btn-mode .label { font-size: 1rem; font-weight: 700; display: block; }
+    .btn-mode .desc { font-size: 0.8rem; color: var(--muted); display: block; margin-top: 2px; }
+    .btn-mode:hover { border-color: var(--primary); }
+    .btn-mode.selected { border-color: var(--primary); background: #eff6ff; }
+    .btn-mode.selected .label { color: var(--primary); }
+    .count-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .count-btn {
+      padding: 8px 16px; border: 2px solid #e2e8f0; border-radius: 8px;
+      background: white; cursor: pointer; font-weight: 600; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .count-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+    .start-btn {
+      width: 100%; padding: 18px; font-size: 1.1rem;
+      background: var(--primary); color: white; border: none;
+      border-radius: 12px; cursor: pointer; font-weight: 700;
+      font-family: inherit; transition: all 0.15s;
+    }
+    .start-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+    .question-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; font-size: 0.9rem; color: var(--muted);
+    }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge-reading { background: #dbeafe; color: #1d4ed8; }
+    .badge-writing { background: #dcfce7; color: #166534; }
+    .question-text { font-size: 1.9rem; text-align: center; margin: 20px 0; line-height: 1.7; }
+    .kanji-hl { color: var(--primary); font-weight: 700; border-bottom: 3px solid var(--primary); }
+    .hint-text { text-align: center; color: var(--muted); margin-bottom: 12px; font-size: 0.9rem; }
+    .reading-display { font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 16px; color: #475569; }
+    .answer-input {
+      width: 100%; padding: 14px; font-size: 16px;
+      border: 2px solid #e2e8f0; border-radius: 10px; text-align: center;
+      outline: none; transition: border-color 0.2s; font-family: inherit;
+      margin-bottom: 12px;
+    }
+    .answer-input:focus { border-color: var(--primary); }
+    .answer-input.correct { border-color: var(--success); background: #f0fdf4; }
+    .answer-input.incorrect { border-color: var(--error); background: #fef2f2; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .choice-btn {
+      padding: 18px 10px; font-size: 1.6rem;
+      border: 2px solid #e2e8f0; border-radius: 10px; background: white;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .choice-btn:hover:not(:disabled) { border-color: var(--primary); background: #eff6ff; transform: translateY(-1px); }
+    .choice-btn.correct { border-color: var(--success) !important; background: #f0fdf4 !important; }
+    .choice-btn.incorrect { border-color: var(--error) !important; background: #fef2f2 !important; }
+    .choice-btn:disabled { cursor: default; transform: none; }
+    .feedback { text-align: center; font-size: 1.1rem; font-weight: 600; margin: 14px 0; min-height: 28px; }
+    .feedback.correct { color: var(--success); }
+    .feedback.incorrect { color: var(--error); }
+    .next-btn {
+      width: 100%; padding: 14px; font-size: 1rem;
+      background: #475569; color: white; border: none;
+      border-radius: 10px; cursor: pointer; font-weight: 600;
+      font-family: inherit; display: none; margin-top: 4px;
+    }
+    .next-btn:hover { background: #334155; }
+    .score-big { font-size: 3.5rem; font-weight: 700; text-align: center; color: var(--primary); margin: 20px 0 4px; }
+    .score-pct { text-align: center; color: var(--muted); margin-bottom: 4px; }
+    .score-msg { text-align: center; font-weight: 600; font-size: 1.1rem; margin-bottom: 28px; }
+    .wrong-list-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+    .wrong-list { max-height: 320px; overflow-y: auto; }
+    .wrong-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 4px; border-bottom: 1px solid #f8fafc; gap: 8px;
+    }
+    .wrong-item .w-word { font-size: 1.1rem; font-weight: 700; min-width: 80px; }
+    .wrong-item .w-hint { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    .wrong-item .w-ans { text-align: right; font-size: 0.85rem; color: #059669; }
+    .wrong-item .w-mine { color: var(--error); font-size: 0.8rem; }
+    .all-correct { text-align: center; color: var(--success); padding: 20px; font-size: 1.1rem; font-weight: 600; }
+    .answer-check-btn {
+      width: 100%; padding: 14px; font-size: 1rem;
+      background: var(--primary); color: white; border: none;
+      border-radius: 10px; cursor: pointer; font-weight: 600; font-family: inherit;
+    }
+    .answer-check-btn:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="start-screen" class="screen active">
+    <div class="card">
+      <h1>小学6年生<br>漢字テスト</h1>
+      <p class="subtitle">191字の漢字を確認しよう！</p>
+
+      <h2>テストの種類を選ぶ</h2>
+      <div class="mode-buttons">
+        <button class="btn-mode selected" id="mode-btn-reading" onclick="selectMode('reading')">
+          <span class="icon">📖</span>
+          <span class="label">読みテスト</span>
+          <span class="desc">漢字 → ひらがな</span>
+        </button>
+        <button class="btn-mode" id="mode-btn-writing" onclick="selectMode('writing')">
+          <span class="icon">✏️</span>
+          <span class="label">書きテスト</span>
+          <span class="desc">ひらがな → 漢字選択</span>
+        </button>
+      </div>
+
+      <h2>問題数を選ぶ</h2>
+      <div class="count-selector">
+        <button class="count-btn" onclick="selectCount(10)">10問</button>
+        <button class="count-btn selected" onclick="selectCount(20)">20問</button>
+        <button class="count-btn" onclick="selectCount(30)">30問</button>
+        <button class="count-btn" onclick="selectCount(50)">50問</button>
+        <button class="count-btn" onclick="selectCount(0)">全問</button>
+      </div>
+
+      <button class="start-btn" onclick="startTest()">テスト開始 →</button>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ SCREEN ===== -->
+  <div id="quiz-screen" class="screen">
+    <div class="card">
+      <div class="question-meta">
+        <span id="q-counter">1 / 20</span>
+        <span id="q-score">正解: 0</span>
+        <span id="q-badge"></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div id="question-area"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題 →</button>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS SCREEN ===== -->
+  <div id="results-screen" class="screen">
+    <div class="card">
+      <h1>テスト結果</h1>
+      <div class="score-big" id="res-score"></div>
+      <div class="score-pct" id="res-pct"></div>
+      <div class="score-msg" id="res-msg"></div>
+      <div class="wrong-list-title">間違えた問題</div>
+      <div class="wrong-list" id="wrong-list"></div>
+      <button class="start-btn" style="margin-top:24px;" onclick="backToStart()">もう一度チャレンジ</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== 語彙データ (小学6年生 191字対応) =====
+const vocab = [
+  { word:"異常", reading:"いじょう", hint:"___な天気が続いている" },
+  { word:"異なる", reading:"ことなる", hint:"二つの意見が___" },
+  { word:"遺産", reading:"いさん", hint:"世界___に登録された" },
+  { word:"遺言", reading:"ゆいごん", hint:"祖父の___を読んだ" },
+  { word:"地域", reading:"ちいき", hint:"この___に住んでいる" },
+  { word:"区域", reading:"くいき", hint:"禁止___に入らない" },
+  { word:"宇宙", reading:"うちゅう", hint:"___飛行士になりたい" },
+  { word:"映画", reading:"えいが", hint:"___を見に行った" },
+  { word:"映る", reading:"うつる", hint:"鏡に顔が___" },
+  { word:"延長", reading:"えんちょう", hint:"試合が___された" },
+  { word:"沿岸", reading:"えんがん", hint:"___に港がある" },
+  { word:"我慢", reading:"がまん", hint:"痛みを___した" },
+  { word:"灰色", reading:"はいいろ", hint:"___の空が広がる" },
+  { word:"拡大", reading:"かくだい", hint:"地図を___して見た" },
+  { word:"改革", reading:"かいかく", hint:"制度を___する" },
+  { word:"革命", reading:"かくめい", hint:"産業___が起きた" },
+  { word:"内閣", reading:"ないかく", hint:"___総理大臣" },
+  { word:"割合", reading:"わりあい", hint:"水の___が多い" },
+  { word:"分割", reading:"ぶんかつ", hint:"土地を___する" },
+  { word:"看護", reading:"かんご", hint:"___師として働く" },
+  { word:"看板", reading:"かんばん", hint:"店の___を出す" },
+  { word:"簡単", reading:"かんたん", hint:"___な問題だ" },
+  { word:"危険", reading:"きけん", hint:"___な場所に近づかない" },
+  { word:"発揮", reading:"はっき", hint:"実力を___する" },
+  { word:"指揮", reading:"しき", hint:"楽団を___する" },
+  { word:"貴重", reading:"きちょう", hint:"___な体験をした" },
+  { word:"貴族", reading:"きぞく", hint:"___の生活を描いた" },
+  { word:"疑問", reading:"ぎもん", hint:"___に思うことがある" },
+  { word:"疑う", reading:"うたがう", hint:"話を___気持ちになった" },
+  { word:"吸収", reading:"きゅうしゅう", hint:"水分を___する" },
+  { word:"提供", reading:"ていきょう", hint:"情報を___する" },
+  { word:"胸囲", reading:"きょうい", hint:"___を測る" },
+  { word:"故郷", reading:"こきょう", hint:"___に帰りたい" },
+  { word:"郷土", reading:"きょうど", hint:"___料理を食べた" },
+  { word:"勤務", reading:"きんむ", hint:"___時間が長い" },
+  { word:"筋肉", reading:"きんにく", hint:"___を鍛える" },
+  { word:"筋道", reading:"すじみち", hint:"___を立てて話す" },
+  { word:"系統", reading:"けいとう", hint:"___を整理する" },
+  { word:"体系", reading:"たいけい", hint:"___的に学ぶ" },
+  { word:"尊敬", reading:"そんけい", hint:"先生を___する" },
+  { word:"敬語", reading:"けいご", hint:"正しい___を使う" },
+  { word:"警察", reading:"けいさつ", hint:"___に届ける" },
+  { word:"警告", reading:"けいこく", hint:"危険を___する" },
+  { word:"劇場", reading:"げきじょう", hint:"___で演劇を見た" },
+  { word:"演劇", reading:"えんげき", hint:"___部に入った" },
+  { word:"激しい", reading:"はげしい", hint:"___雨が降った" },
+  { word:"権利", reading:"けんり", hint:"人間の___を守る" },
+  { word:"人権", reading:"じんけん", hint:"___を尊重する" },
+  { word:"憲法", reading:"けんぽう", hint:"日本国___を学ぶ" },
+  { word:"資源", reading:"しげん", hint:"天然___を大切にする" },
+  { word:"源泉", reading:"げんせん", hint:"温泉の___を調べた" },
+  { word:"厳しい", reading:"きびしい", hint:"___訓練に耐えた" },
+  { word:"厳格", reading:"げんかく", hint:"___なルールがある" },
+  { word:"自己", reading:"じこ", hint:"___紹介をする" },
+  { word:"呼吸", reading:"こきゅう", hint:"深く___する" },
+  { word:"誤解", reading:"ごかい", hint:"___を解く" },
+  { word:"誤る", reading:"あやまる", hint:"道を___" },
+  { word:"皇室", reading:"こうしつ", hint:"___の行事がある" },
+  { word:"天皇", reading:"てんのう", hint:"___陛下" },
+  { word:"孝行", reading:"こうこう", hint:"親___をする" },
+  { word:"紅葉", reading:"こうよう", hint:"秋の___が美しい" },
+  { word:"紅白", reading:"こうはく", hint:"___歌合戦を見た" },
+  { word:"鋼鉄", reading:"こうてつ", hint:"___の橋が架かる" },
+  { word:"時刻", reading:"じこく", hint:"___表を確認する" },
+  { word:"刻む", reading:"きざむ", hint:"野菜を細かく___" },
+  { word:"穀物", reading:"こくもつ", hint:"___を収穫する" },
+  { word:"骨格", reading:"こっかく", hint:"___がしっかりしている" },
+  { word:"困難", reading:"こんなん", hint:"___を乗り越える" },
+  { word:"砂漠", reading:"さばく", hint:"___を旅する" },
+  { word:"座席", reading:"ざせき", hint:"___に着く" },
+  { word:"経済", reading:"けいざい", hint:"___が発展する" },
+  { word:"裁判", reading:"さいばん", hint:"___所で争う" },
+  { word:"裁く", reading:"さばく", hint:"罪を___" },
+  { word:"政策", reading:"せいさく", hint:"新しい___を立てる" },
+  { word:"策略", reading:"さくりゃく", hint:"___を練る" },
+  { word:"蚕", reading:"かいこ", hint:"___から絹を作る" },
+  { word:"至急", reading:"しきゅう", hint:"___連絡してください" },
+  { word:"私立", reading:"しりつ", hint:"___学校に通う" },
+  { word:"姿勢", reading:"しせい", hint:"正しい___で座る" },
+  { word:"視野", reading:"しや", hint:"___を広げる" },
+  { word:"重視", reading:"じゅうし", hint:"安全を___する" },
+  { word:"歌詞", reading:"かし", hint:"曲の___を覚えた" },
+  { word:"品詞", reading:"ひんし", hint:"___の種類を覚える" },
+  { word:"雑誌", reading:"ざっし", hint:"___を読む" },
+  { word:"日誌", reading:"にっし", hint:"学級___をつける" },
+  { word:"磁石", reading:"じしゃく", hint:"___が鉄を引き付ける" },
+  { word:"注射", reading:"ちゅうしゃ", hint:"予防___を打った" },
+  { word:"捨てる", reading:"すてる", hint:"ごみを___" },
+  { word:"若者", reading:"わかもの", hint:"元気な___たち" },
+  { word:"若い", reading:"わかい", hint:"___頃の写真" },
+  { word:"樹木", reading:"じゅもく", hint:"___が生い茂る" },
+  { word:"収入", reading:"しゅうにゅう", hint:"___が増えた" },
+  { word:"宗教", reading:"しゅうきょう", hint:"様々な___がある" },
+  { word:"就職", reading:"しゅうしょく", hint:"___活動をする" },
+  { word:"衆議院", reading:"しゅうぎいん", hint:"___で法律を決める" },
+  { word:"服従", reading:"ふくじゅう", hint:"命令に___する" },
+  { word:"縦断", reading:"じゅうだん", hint:"日本を___旅行する" },
+  { word:"縦", reading:"たて", hint:"___の長さを測る" },
+  { word:"熟語", reading:"じゅくご", hint:"___の意味を調べる" },
+  { word:"熟す", reading:"じゅくす", hint:"果物が___" },
+  { word:"純粋", reading:"じゅんすい", hint:"___な心を持つ" },
+  { word:"処理", reading:"しょり", hint:"データを___する" },
+  { word:"処分", reading:"しょぶん", hint:"不要品を___する" },
+  { word:"署名", reading:"しょめい", hint:"書類に___する" },
+  { word:"警察署", reading:"けいさつしょ", hint:"___に届け出る" },
+  { word:"諸国", reading:"しょこく", hint:"___を旅する" },
+  { word:"掃除", reading:"そうじ", hint:"部屋を___する" },
+  { word:"除く", reading:"のぞく", hint:"不要な部分を___" },
+  { word:"将来", reading:"しょうらい", hint:"___の夢を語る" },
+  { word:"負傷", reading:"ふしょう", hint:"試合で___した" },
+  { word:"障害", reading:"しょうがい", hint:"___を乗り越える" },
+  { word:"城下町", reading:"じょうかまち", hint:"歴史ある___を訪れた" },
+  { word:"蒸気", reading:"じょうき", hint:"水の___が上がる" },
+  { word:"蒸す", reading:"むす", hint:"野菜を___調理法" },
+  { word:"垂直", reading:"すいちょく", hint:"___に立てる" },
+  { word:"推測", reading:"すいそく", hint:"結果を___する" },
+  { word:"推薦", reading:"すいせん", hint:"友人を___する" },
+  { word:"盛ん", reading:"さかん", hint:"この地域は農業が___だ" },
+  { word:"盛る", reading:"もる", hint:"皿に料理を___" },
+  { word:"聖人", reading:"せいじん", hint:"___の教えを学ぶ" },
+  { word:"神聖", reading:"しんせい", hint:"___な場所を訪れた" },
+  { word:"誠実", reading:"せいじつ", hint:"___な人柄だ" },
+  { word:"誠意", reading:"せいい", hint:"___を持って対応する" },
+  { word:"改善", reading:"かいぜん", hint:"問題点を___する" },
+  { word:"善意", reading:"ぜんい", hint:"___から行動した" },
+  { word:"演奏", reading:"えんそう", hint:"ピアノを___する" },
+  { word:"奏でる", reading:"かなでる", hint:"楽器を___" },
+  { word:"創造", reading:"そうぞう", hint:"新しいものを___する" },
+  { word:"創作", reading:"そうさく", hint:"___活動に取り組む" },
+  { word:"服装", reading:"ふくそう", hint:"___を整える" },
+  { word:"装備", reading:"そうび", hint:"登山___を確認した" },
+  { word:"地層", reading:"ちそう", hint:"___から歴史がわかる" },
+  { word:"層", reading:"そう", hint:"大気の___" },
+  { word:"操作", reading:"そうさ", hint:"機械を___する" },
+  { word:"体操", reading:"たいそう", hint:"朝の___をする" },
+  { word:"宝蔵", reading:"ほうぞう", hint:"___に宝物が眠る" },
+  { word:"心臓", reading:"しんぞう", hint:"___が速く鼓動する" },
+  { word:"臓器", reading:"ぞうき", hint:"___移植の手術" },
+  { word:"存在", reading:"そんざい", hint:"確かに___している" },
+  { word:"保存", reading:"ほぞん", hint:"食品を___する" },
+  { word:"尊重", reading:"そんちょう", hint:"意見を___する" },
+  { word:"宅配", reading:"たくはい", hint:"___便で届いた" },
+  { word:"自宅", reading:"じたく", hint:"___で勉強する" },
+  { word:"担当", reading:"たんとう", hint:"この仕事を___する" },
+  { word:"担ぐ", reading:"かつぐ", hint:"荷物を___" },
+  { word:"探検", reading:"たんけん", hint:"森の中を___する" },
+  { word:"探す", reading:"さがす", hint:"落とし物を___" },
+  { word:"誕生", reading:"たんじょう", hint:"___日おめでとう" },
+  { word:"段階", reading:"だんかい", hint:"次の___に進む" },
+  { word:"手段", reading:"しゅだん", hint:"様々な___を使う" },
+  { word:"暖房", reading:"だんぼう", hint:"冬は___を使う" },
+  { word:"暖かい", reading:"あたたかい", hint:"___日差しを感じた" },
+  { word:"価値", reading:"かち", hint:"___のあるものを大切に" },
+  { word:"値段", reading:"ねだん", hint:"___を確認する" },
+  { word:"宇宙", reading:"うちゅう", hint:"___の広さに驚く" },
+  { word:"宙返り", reading:"ちゅうがえり", hint:"空中で___をした" },
+  { word:"忠実", reading:"ちゅうじつ", hint:"___に仕事をこなす" },
+  { word:"忠告", reading:"ちゅうこく", hint:"友の___を聞いた" },
+  { word:"著者", reading:"ちょしゃ", hint:"この本の___は誰だ" },
+  { word:"著作", reading:"ちょさく", hint:"___権を守る" },
+  { word:"庁舎", reading:"ちょうしゃ", hint:"市の___が新しくなった" },
+  { word:"官庁", reading:"かんちょう", hint:"___に就職する" },
+  { word:"頂上", reading:"ちょうじょう", hint:"山の___に立つ" },
+  { word:"頂く", reading:"いただく", hint:"プレゼントを___" },
+  { word:"干潮", reading:"かんちょう", hint:"___のとき潮が引く" },
+  { word:"賃金", reading:"ちんぎん", hint:"労働者の___が上がった" },
+  { word:"家賃", reading:"やちん", hint:"___を払う" },
+  { word:"痛い", reading:"いたい", hint:"頭が___" },
+  { word:"痛み", reading:"いたみ", hint:"足の___が引かない" },
+  { word:"発展", reading:"はってん", hint:"技術が___する" },
+  { word:"展示", reading:"てんじ", hint:"作品を___する" },
+  { word:"政党", reading:"せいとう", hint:"___を支持する" },
+  { word:"党員", reading:"とういん", hint:"___に入る" },
+  { word:"砂糖", reading:"さとう", hint:"コーヒーに___を入れる" },
+  { word:"糖分", reading:"とうぶん", hint:"___を控える" },
+  { word:"検討", reading:"けんとう", hint:"計画を___する" },
+  { word:"討論", reading:"とうろん", hint:"テーマについて___する" },
+  { word:"届ける", reading:"とどける", hint:"荷物を___" },
+  { word:"届く", reading:"とどく", hint:"手紙が___" },
+  { word:"牛乳", reading:"ぎゅうにゅう", hint:"毎朝___を飲む" },
+  { word:"乳", reading:"ちち", hint:"赤ちゃんに___を与える" },
+  { word:"確認", reading:"かくにん", hint:"内容を___する" },
+  { word:"認める", reading:"みとめる", hint:"ミスを___" },
+  { word:"納得", reading:"なっとく", hint:"説明に___した" },
+  { word:"納める", reading:"おさめる", hint:"税金を___" },
+  { word:"脳裏", reading:"のうり", hint:"___に焼き付いた" },
+  { word:"脳", reading:"のう", hint:"___を鍛える" },
+  { word:"派遣", reading:"はけん", hint:"社員を___する" },
+  { word:"派手", reading:"はで", hint:"___な服装だ" },
+  { word:"参拝", reading:"さんぱい", hint:"神社に___する" },
+  { word:"背景", reading:"はいけい", hint:"事件の___を探る" },
+  { word:"背", reading:"せ", hint:"___が高い" },
+  { word:"肺炎", reading:"はいえん", hint:"___にかかった" },
+  { word:"俳句", reading:"はいく", hint:"___を詠む" },
+  { word:"俳優", reading:"はいゆう", hint:"有名な___が出演する" },
+  { word:"班長", reading:"はんちょう", hint:"クラスの___になった" },
+  { word:"晩年", reading:"ばんねん", hint:"___を故郷で過ごした" },
+  { word:"否定", reading:"ひてい", hint:"意見を___する" },
+  { word:"是非", reading:"ぜひ", hint:"___参加してください" },
+  { word:"批判", reading:"ひはん", hint:"政策を___する" },
+  { word:"批評", reading:"ひひょう", hint:"作品を___する" },
+  { word:"秘密", reading:"ひみつ", hint:"___を守る" },
+  { word:"神秘", reading:"しんぴ", hint:"宇宙の___に迫る" },
+  { word:"腹", reading:"はら", hint:"___が空いた" },
+  { word:"腹立つ", reading:"はらだつ", hint:"失礼な言葉に___" },
+  { word:"興奮", reading:"こうふん", hint:"試合に___した" },
+  { word:"奮発", reading:"ふんぱつ", hint:"___して高い品を買った" },
+  { word:"並ぶ", reading:"ならぶ", hint:"列に___" },
+  { word:"並行", reading:"へいこう", hint:"___して作業する" },
+  { word:"陛下", reading:"へいか", hint:"天皇___" },
+  { word:"閉じる", reading:"とじる", hint:"本を___" },
+  { word:"閉会", reading:"へいかい", hint:"式が___した" },
+  { word:"片手", reading:"かたて", hint:"___で持てる重さ" },
+  { word:"断片", reading:"だんぺん", hint:"___的な情報" },
+  { word:"補う", reading:"おぎなう", hint:"不足を___" },
+  { word:"補足", reading:"ほそく", hint:"説明を___する" },
+  { word:"暮れる", reading:"くれる", hint:"日が___" },
+  { word:"暮らす", reading:"くらす", hint:"田舎で___" },
+  { word:"宝石", reading:"ほうせき", hint:"美しい___が光る" },
+  { word:"訪問", reading:"ほうもん", hint:"友人の家を___する" },
+  { word:"訪れる", reading:"おとずれる", hint:"春が___" },
+  { word:"死亡", reading:"しぼう", hint:"事故で___した" },
+  { word:"亡くなる", reading:"なくなる", hint:"祖母が___" },
+  { word:"忘れる", reading:"わすれる", hint:"名前を___" },
+  { word:"忘却", reading:"ぼうきゃく", hint:"___のかなたに消えた" },
+  { word:"棒", reading:"ぼう", hint:"鉄の___で打つ" },
+  { word:"枚数", reading:"まいすう", hint:"紙の___を数える" },
+  { word:"幕府", reading:"ばくふ", hint:"江戸___の時代" },
+  { word:"秘密", reading:"ひみつ", hint:"___を打ち明けた" },
+  { word:"同盟", reading:"どうめい", hint:"___を結ぶ" },
+  { word:"連盟", reading:"れんめい", hint:"国際___に加盟した" },
+  { word:"模型", reading:"もけい", hint:"飛行機の___を作る" },
+  { word:"模様", reading:"もよう", hint:"美しい___の布" },
+  { word:"翻訳", reading:"ほんやく", hint:"英語を___する" },
+  { word:"訳", reading:"わけ", hint:"理由や___を話す" },
+  { word:"郵便", reading:"ゆうびん", hint:"___局に行く" },
+  { word:"優秀", reading:"ゆうしゅう", hint:"___な成績を収める" },
+  { word:"優しい", reading:"やさしい", hint:"___先生に習った" },
+  { word:"幼稚園", reading:"ようちえん", hint:"___に通う" },
+  { word:"幼い", reading:"おさない", hint:"___頃の思い出" },
+  { word:"食欲", reading:"しょくよく", hint:"___が増した" },
+  { word:"欲しい", reading:"ほしい", hint:"プレゼントが___" },
+  { word:"翌日", reading:"よくじつ", hint:"___に報告する" },
+  { word:"翌年", reading:"よくねん", hint:"___に再会した" },
+  { word:"混乱", reading:"こんらん", hint:"場が___した" },
+  { word:"乱れる", reading:"みだれる", hint:"髪が___" },
+  { word:"卵", reading:"たまご", hint:"鶏の___を料理する" },
+  { word:"一覧", reading:"いちらん", hint:"___表を確認する" },
+  { word:"観覧", reading:"かんらん", hint:"展示を___する" },
+  { word:"裏切り", reading:"うらぎり", hint:"友の___に傷ついた" },
+  { word:"裏", reading:"うら", hint:"紙の___を使う" },
+  { word:"規律", reading:"きりつ", hint:"___を守る" },
+  { word:"律する", reading:"りっする", hint:"自分を___" },
+  { word:"臨時", reading:"りんじ", hint:"___列車が出た" },
+  { word:"臨む", reading:"のぞむ", hint:"試合に___" },
+  { word:"朗読", reading:"ろうどく", hint:"詩を___する" },
+  { word:"明朗", reading:"めいろう", hint:"___な性格だ" },
+  { word:"論文", reading:"ろんぶん", hint:"___を書く" },
+  { word:"議論", reading:"ぎろん", hint:"活発な___が行われた" },
+  { word:"密接", reading:"みっせつ", hint:"___な関係がある" },
+  { word:"密度", reading:"みつど", hint:"人口___が高い" },
+  { word:"絹", reading:"きぬ", hint:"___の着物を着た" },
+  { word:"穴", reading:"あな", hint:"地面に___を掘る" },
+  { word:"寸法", reading:"すんぽう", hint:"部屋の___を測る" },
+  { word:"舌", reading:"した", hint:"___を出す" },
+];
+
+// deduplicate by word
+const seen = new Set();
+const vocabUniq = vocab.filter(v => {
+  if (seen.has(v.word)) return false;
+  seen.add(v.word);
+  return true;
+});
+
+// ===== 視覚的に紛らわしい漢字マップ =====
+// 各漢字 → 形が似ている漢字のリスト（線が1本多い・少ない、偏が似ているなど）
+const visualSimilar = {
+  "異": ["具","真","直","異"],
+  "遺": ["遣","遊","選"],
+  "映": ["映","栄","英"],
+  "延": ["廷","建","誕"],
+  "拡": ["括","控","拡"],
+  "革": ["勒","靴","勧"],
+  "閣": ["閑","関","間"],
+  "割": ["劃","制","刻"],
+  "簡": ["間","閑","閣"],
+  "揮": ["輝","暉","旗"],
+  "貴": ["費","遺","貢"],
+  "疑": ["擬","凝","疑"],
+  "吸": ["及","汲","扱"],
+  "郷": ["響","卿","鄉"],
+  "勤": ["勧","動","勢"],
+  "系": ["糸","係","紀"],
+  "敬": ["警","境","鏡"],
+  "警": ["敬","鏡","境"],
+  "劇": ["激","撃","劃"],
+  "激": ["劇","撃","潔"],
+  "絹": ["綿","網","綱"],
+  "権": ["欄","棟","横"],
+  "憲": ["懸","慧","憩"],
+  "源": ["原","願","緩"],
+  "厳": ["巌","岩","誠"],
+  "誤": ["語","話","誌"],
+  "語": ["誤","話","誌"],
+  "皇": ["星","里","量"],
+  "紅": ["虹","絶","紫"],
+  "鋼": ["剛","綱","鍋"],
+  "刻": ["割","劃","剥"],
+  "穀": ["殻","穀","數"],
+  "困": ["因","囚","囲"],
+  "砂": ["沙","炒","砕"],
+  "済": ["斎","剤","際"],
+  "裁": ["載","戴","栽"],
+  "磁": ["慈","滋","磁"],
+  "射": ["謝","斜","斷"],
+  "捨": ["拾","措","擦"],
+  "拾": ["捨","拾","措"],
+  "若": ["苦","着","茶"],
+  "樹": ["橋","橘","機"],
+  "収": ["叫","叱","収"],
+  "就": ["蹴","截","就"],
+  "衆": ["象","像","衆"],
+  "従": ["縦","従","緩"],
+  "縦": ["従","横","縦"],
+  "熟": ["塾","孰","熱"],
+  "塾": ["熟","孰","執"],
+  "純": ["鈍","頓","鈴"],
+  "処": ["所","居","処"],
+  "諸": ["者","著","都"],
+  "除": ["徐","余","赦"],
+  "将": ["奨","帥","牀"],
+  "傷": ["腸","陽","揚"],
+  "腸": ["傷","陽","揚"],
+  "障": ["章","彰","障"],
+  "章": ["障","彰","掌"],
+  "蒸": ["燕","烝","薫"],
+  "垂": ["睡","唾","垂"],
+  "推": ["惟","准","堆"],
+  "盛": ["成","城","誠"],
+  "誠": ["成","城","盛"],
+  "善": ["義","羊","美"],
+  "奏": ["泰","奉","奔"],
+  "創": ["倉","蒼","槍"],
+  "装": ["壮","荘","裝"],
+  "操": ["燥","澡","嫂"],
+  "燥": ["操","澡","躁"],
+  "蔵": ["臓","藏","蔵"],
+  "臓": ["蔵","腸","臓"],
+  "尊": ["遵","導","樽"],
+  "担": ["但","坦","拒"],
+  "探": ["深","混","渡"],
+  "誕": ["延","廷","涎"],
+  "暖": ["緩","援","煖"],
+  "忠": ["患","忠","恕"],
+  "著": ["者","諸","箸"],
+  "者": ["著","諸","都"],
+  "潮": ["朝","澗","湖"],
+  "賃": ["貸","貢","賦"],
+  "貸": ["賃","貢","賀"],
+  "展": ["農","辰","振"],
+  "糖": ["唐","塘","糖"],
+  "討": ["訂","詩","訪"],
+  "認": ["訪","誌","詔"],
+  "訪": ["認","誌","討"],
+  "納": ["絡","納","綿"],
+  "脳": ["悩","悦","脳"],
+  "悩": ["脳","悦","悶"],
+  "俳": ["排","徘","俵"],
+  "排": ["俳","徘","押"],
+  "批": ["批","批","扱"],
+  "秘": ["泌","密","泌"],
+  "泌": ["秘","密","沁"],
+  "密": ["蜜","密","泌"],
+  "蜜": ["密","密","泌"],
+  "腹": ["服","腿","腸"],
+  "奮": ["震","憤","奮"],
+  "並": ["普","竝","排"],
+  "閉": ["開","関","閣"],
+  "補": ["浦","輔","捕"],
+  "暮": ["墓","幕","慕"],
+  "墓": ["暮","幕","慕"],
+  "幕": ["暮","墓","慕"],
+  "慕": ["暮","墓","幕"],
+  "訪": ["紡","坊","訪"],
+  "亡": ["忘","妄","亡"],
+  "忘": ["亡","妄","忘"],
+  "盟": ["明","盲","盟"],
+  "模": ["摸","楳","横"],
+  "訳": ["沢","択","訳"],
+  "優": ["憂","悠","優"],
+  "憂": ["優","悠","憂"],
+  "欲": ["浴","谷","欲"],
+  "浴": ["欲","谷","沿"],
+  "乱": ["乳","乙","孔"],
+  "乳": ["乱","乙","孔"],
+  "覧": ["監","臨","鑑"],
+  "監": ["覧","臨","鑑"],
+  "臨": ["監","覧","臨"],
+  "律": ["律","書","健"],
+  "朗": ["郎","廊","朗"],
+  "郎": ["朗","廊","郞"],
+  "論": ["倫","輪","諭"],
+  "倫": ["論","輪","諭"],
+  "皇": ["星","量","里"],
+  "宅": ["宇","宗","宝"],
+  "宇": ["宅","宗","宝"],
+  "宗": ["宅","宇","宝"],
+  "宝": ["宅","宇","宗"],
+  "存": ["在","在","存"],
+  "在": ["存","存","存"],
+  "尊": ["遵","遵","樽"],
+};
+
+// 単語の「テスト対象漢字」を返す：視覚類似が多い漢字を優先
+function getTargetKanji(word) {
+  const kanjiChars = [...word].filter(ch => /[\u4e00-\u9fff]/.test(ch));
+  if (kanjiChars.length === 0) return null;
+  let best = kanjiChars[0];
+  let bestCount = (visualSimilar[best] || []).length;
+  for (const k of kanjiChars) {
+    const count = (visualSimilar[k] || []).length;
+    if (count > bestCount) { best = k; bestCount = count; }
+  }
+  return best;
+}
+
+// 正解の漢字1文字だけを似た字に差し替えた「偽の選択肢」を生成
+function generateSimilarChoices(q) {
+  const target = getTargetKanji(q.word);
+  const sims = target ? (visualSimilar[target] || []) : [];
+
+  const fakes = [];
+  const usedWords = new Set([q.word]);
+  for (const sim of shuffle([...sims])) {
+    if (sim === target) continue;
+    const fakeWord = q.word.replace(target, sim);
+    if (!usedWords.has(fakeWord)) {
+      usedWords.add(fakeWord);
+      fakes.push({ word: fakeWord, reading: q.reading, hint: q.hint });
+    }
+    if (fakes.length >= 3) break;
+  }
+
+  // 足りなければ同じ文字数の別語彙で補う（フォールバック）
+  if (fakes.length < 3) {
+    const pool = shuffle(vocabUniq.filter(v => !usedWords.has(v.word)));
+    const sameLen = pool.filter(v => v.word.length === q.word.length);
+    const fallback = sameLen.length >= 3 - fakes.length ? sameLen : pool;
+    for (const v of fallback) {
+      if (fakes.length >= 3) break;
+      if (!usedWords.has(v.word)) { fakes.push(v); usedWords.add(v.word); }
+    }
+  }
+
+  return shuffle([q, ...fakes.slice(0, 3)]);
+}
+
+// ===== App State =====
+let selectedMode = 'reading';
+let selectedCount = 20;
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let results = [];
+let currentChoices = [];
+
+// ===== Helpers =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function selectMode(mode) {
+  selectedMode = mode;
+  document.getElementById('mode-btn-reading').classList.toggle('selected', mode === 'reading');
+  document.getElementById('mode-btn-writing').classList.toggle('selected', mode === 'writing');
+}
+
+function selectCount(count) {
+  selectedCount = count;
+  document.querySelectorAll('.count-btn').forEach(btn => {
+    const n = btn.textContent === '全問' ? 0 : parseInt(btn.textContent);
+    btn.classList.toggle('selected', n === count);
+  });
+}
+
+// ===== Test Logic =====
+function startTest() {
+  const shuffled = shuffle(vocabUniq);
+  const count = selectedCount === 0 ? shuffled.length : Math.min(selectedCount, shuffled.length);
+  questions = shuffled.slice(0, count);
+  currentIndex = 0;
+  score = 0;
+  results = [];
+  showScreen('quiz-screen');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentIndex];
+  answered = false;
+  currentChoices = [];
+
+  document.getElementById('q-counter').textContent = `${currentIndex + 1} / ${questions.length}`;
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('progress-fill').style.width = `${(currentIndex / questions.length) * 100}%`;
+  document.getElementById('q-badge').innerHTML =
+    selectedMode === 'reading'
+      ? '<span class="badge badge-reading">読みテスト</span>'
+      : '<span class="badge badge-writing">書きテスト</span>';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const area = document.getElementById('question-area');
+
+  if (selectedMode === 'reading') {
+    // Show kanji word highlighted, user types hiragana
+    const hintWithHL = q.hint.replace('___', `<span class="kanji-hl">${q.word}</span>`);
+    area.innerHTML = `
+      <div class="hint-text">下線の漢字の読み方をひらがなで書きなさい</div>
+      <div class="question-text">${hintWithHL}</div>
+      <input type="text" id="answer-input" class="answer-input"
+        placeholder="ひらがなで入力"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')checkReadingAnswer()">
+      <button class="answer-check-btn" onclick="checkReadingAnswer()">答え合わせ</button>
+    `;
+    setTimeout(() => document.getElementById('answer-input')?.focus(), 50);
+  } else {
+    // Show hiragana reading + context, user selects correct kanji from 4 choices
+    currentChoices = generateSimilarChoices(q);
+
+    const hintWithBlank = q.hint.replace('___', '<span class="kanji-hl">（　　）</span>');
+    area.innerHTML = `
+      <div class="hint-text">（　　）に入る正しい漢字を選びなさい</div>
+      <div class="question-text">${hintWithBlank}</div>
+      <div class="reading-display">読み：${q.reading}</div>
+      <div class="choices">
+        ${currentChoices.map((c, i) => `
+          <button class="choice-btn" id="choice-${i}" onclick="checkWritingAnswer(${i})">
+            ${c.word}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+}
+
+function checkReadingAnswer() {
+  if (answered) return;
+  const input = document.getElementById('answer-input');
+  if (!input) return;
+  const userAnswer = input.value.trim();
+  if (!userAnswer) return;
+
+  answered = true;
+  input.disabled = true;
+
+  const correct = questions[currentIndex].reading;
+  const isCorrect = userAnswer === correct;
+
+  input.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    fb.textContent = '✓ 正解！';
+    fb.className = 'feedback correct';
+    score++;
+  } else {
+    fb.textContent = `✗ 不正解。正解は「${correct}」`;
+    fb.className = 'feedback incorrect';
+  }
+
+  results.push({ ...questions[currentIndex], isCorrect, userAnswer });
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function checkWritingAnswer(choiceIdx) {
+  if (answered) return;
+  answered = true;
+
+  const chosen = currentChoices[choiceIdx].word;
+  const correct = questions[currentIndex].word;
+  const isCorrect = chosen === correct;
+
+  document.querySelectorAll('.choice-btn').forEach(btn => { btn.disabled = true; });
+  currentChoices.forEach((c, i) => {
+    const btn = document.getElementById(`choice-${i}`);
+    if (!btn) return;
+    if (c.word === correct) btn.classList.add('correct');
+    else if (i === choiceIdx && !isCorrect) btn.classList.add('incorrect');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (isCorrect) {
+    fb.textContent = '✓ 正解！';
+    fb.className = 'feedback correct';
+    score++;
+  } else {
+    fb.textContent = `✗ 不正解。正解は「${correct}」（${questions[currentIndex].reading}）`;
+    fb.className = 'feedback incorrect';
+  }
+
+  results.push({ ...questions[currentIndex], isCorrect, userAnswer: chosen });
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= questions.length) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  showScreen('results-screen');
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('res-score').textContent = `${score} / ${questions.length}`;
+  document.getElementById('res-pct').textContent = `正答率：${pct}%`;
+
+  let msg = '';
+  if (pct === 100) msg = '完璧です！満点おめでとう！🎉';
+  else if (pct >= 90) msg = '素晴らしい！あと少しで満点！';
+  else if (pct >= 70) msg = 'よくできました！さらに頑張ろう！';
+  else if (pct >= 50) msg = '半分以上正解！復習して次は満点をめざそう！';
+  else msg = 'もっと練習しましょう！一緒に頑張ろう！';
+  document.getElementById('res-msg').textContent = msg;
+
+  const wrong = results.filter(r => !r.isCorrect);
+  const list = document.getElementById('wrong-list');
+  if (wrong.length === 0) {
+    list.innerHTML = '<div class="all-correct">全問正解！🎉 完璧です！</div>';
+  } else {
+    list.innerHTML = wrong.map(r => `
+      <div class="wrong-item">
+        <div>
+          <div class="w-word">${r.word}</div>
+          <div class="w-hint">${r.hint.replace('___', '〔　〕')}</div>
+        </div>
+        <div>
+          <div class="w-ans">正解：${r.reading}</div>
+          ${r.userAnswer ? `<div class="w-mine">入力：${r.userAnswer}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function backToStart() {
+  showScreen('start-screen');
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
+</body>
+</html>
