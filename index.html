@@ -93,6 +93,8 @@
     .badge-math{background:#fef3c7;color:#92400e}
     .badge-sci{background:#f0fdf4;color:#15803d}
     .badge-soc{background:#fdf4ff;color:#7e22ce}
+    .badge-eng{background:#fce7f3;color:#9d174d}
+    .badge-jpn{background:#f1f5f9;color:#334155}
     .q-hint{text-align:center;color:var(--muted);margin-bottom:10px;font-size:.85rem}
     .q-text{font-size:1.8rem;text-align:center;margin:16px 0;line-height:1.6}
     .q-sub{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:14px;color:#475569}
@@ -123,6 +125,23 @@
       border:none;border-radius:10px;cursor:pointer;font-weight:600;font-family:inherit;display:none;margin-top:4px
     }
     .next-btn:hover{background:#334155}
+    .quit-btn{
+      display:block;margin:12px auto 0;padding:8px 20px;
+      background:none;border:1.5px solid #cbd5e1;border-radius:8px;
+      color:var(--muted);font-size:.85rem;font-family:inherit;cursor:pointer;
+    }
+    .quit-btn:hover{background:#f8fafc;color:var(--error);border-color:var(--error)}
+    .confirm-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.4);
+      display:flex;align-items:center;justify-content:center;z-index:100
+    }
+    .confirm-box{
+      background:#fff;border-radius:16px;padding:28px 24px;width:min(320px,90vw);text-align:center
+    }
+    .confirm-box p{font-size:1rem;margin-bottom:20px;line-height:1.6}
+    .confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .confirm-ok{padding:12px;background:var(--error);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-family:inherit}
+    .confirm-cancel{padding:12px;background:#f1f5f9;color:var(--text);border:none;border-radius:10px;cursor:pointer;font-weight:700;font-family:inherit}
     .check-btn{
       width:100%;padding:14px;font-size:1rem;background:var(--primary);color:#fff;
       border:none;border-radius:10px;cursor:pointer;font-weight:600;font-family:inherit
@@ -202,6 +221,18 @@
     <div id="question-area"></div>
     <div class="feedback" id="feedback"></div>
     <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題 →</button>
+    <button class="quit-btn" onclick="confirmQuit()">やめる</button>
+  </div>
+</div>
+
+<!-- 確認ダイアログ -->
+<div class="confirm-overlay" id="quit-overlay" style="display:none">
+  <div class="confirm-box">
+    <p>テストを中断して<br>ホームに戻りますか？<br><small style="color:#94a3b8">（結果は保存されません）</small></p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeQuit()">続ける</button>
+      <button class="confirm-ok" onclick="doQuit()">やめる</button>
+    </div>
   </div>
 </div>
 
@@ -514,12 +545,34 @@ const mathData = {
 
 // --- 理科データ ---
 const scienceData = {
+  4: [
+    {q:"天気予報で「晴れ」の記号は",a:"○（丸）",w:["●（黒丸）","△（三角）","◎（二重丸）"],cat:"天気と気温"},
+    {q:"1日の中で気温が最も高くなるのはいつか",a:"午後2時ごろ",w:["正午（12時）","午前10時ごろ","午後4時ごろ"],cat:"天気と気温"},
+    {q:"くもりの日と晴れの日で気温の変化が大きいのは",a:"晴れの日",w:["くもりの日","雨の日","どちらも同じ"],cat:"天気と気温"},
+    {q:"植物の種が芽を出すことを何というか",a:"発芽",w:["開花","結実","枯れる"],cat:"植物の育ち"},
+    {q:"ヘチマなどの植物の花粉を運ぶのは主に",a:"昆虫",w:["風","鳥","雨"],cat:"植物の育ち"},
+    {q:"植物の花が咲いた後にできるものは",a:"実（種）",w:["葉","根","茎"],cat:"植物の育ち"},
+    {q:"人の骨と骨がつながっている部分を何というか",a:"関節",w:["筋肉","腱","神経"],cat:"体のつくりと運動"},
+    {q:"腕を曲げるとき縮む筋肉はどこか",a:"上腕二頭筋（力こぶ）",w:["上腕三頭筋","三角筋","背筋"],cat:"体のつくりと運動"},
+    {q:"筋肉が縮むと骨はどうなるか",a:"引っ張られて動く",w:["骨が伸びる","骨が太くなる","動かない"],cat:"体のつくりと運動"},
+    {q:"かん電池・豆電球・スイッチをつないで電気が流れる道を何というか",a:"回路",w:["電流","電圧","電力"],cat:"電気のはたらき"},
+    {q:"電池2個を直列につなぐと豆電球は",a:"明るくなる",w:["暗くなる","変わらない","点滅する"],cat:"電気のはたらき"},
+    {q:"電流の大きさをはかる道具は",a:"電流計",w:["温度計","方位磁針","体積計"],cat:"電気のはたらき"},
+    {q:"空気を押し縮めると体積は",a:"小さくなる",w:["大きくなる","変わらない","なくなる"],cat:"空気と水"},
+    {q:"水を力強く押したとき体積は",a:"ほとんど変わらない",w:["小さくなる","大きくなる","なくなる"],cat:"空気と水"},
+    {q:"注射器に空気を閉じ込めて押すとどうなるか",a:"体積が小さくなり手ごたえがある",w:["体積が変わらず手ごたえもない","空気が消える","体積が大きくなる"],cat:"空気と水"},
+    {q:"夏の大三角を構成する星でないのは",a:"シリウス",w:["ベガ","デネブ","アルタイル"],cat:"星と月"},
+    {q:"月が満月から次の満月になるまでの日数は約",a:"30日",w:["7日","14日","365日"],cat:"星と月"},
+    {q:"星の明るさの等級で数字が小さいほど",a:"明るい",w:["暗い","色が赤い","大きい"],cat:"星と月"},
+    {q:"金属を温めると体積は",a:"大きくなる",w:["小さくなる","変わらない","なくなる"],cat:"ものの体積"},
+    {q:"温めたとき体積の変化が最も大きいのは",a:"気体",w:["液体","固体","どれも同じ"],cat:"ものの体積"},
+  ],
   5: [
     {q:"植物の種が発芽するために必要なものでないものは",a:"光",w:["水","空気","適切な温度"],cat:"植物の発芽"},
     {q:"インゲンマメの種のうち、発芽の養分が入っているのは",a:"子葉",w:["根","茎","葉"],cat:"植物の発芽"},
     {q:"メダカのオスとメスの違いとして正しいものは",a:"オスの背びれに切れ込みがある",w:["メスの方が大きい","オスの腹が膨らむ","メスの色が派手"],cat:"メダカ"},
-    {q:"川の上流に多い石の特徴は",a:"角ばっている",w:["丸くなっている","小さい","白い"],cat:"流水のはたらき"},
-    {q:"川の流れが速いところに多いのは",a:"侵食作用",w:["堆積作用","蒸発","浸透"],cat:"流水のはたらき"},
+    {q:"川の上流に多い石の特徴は",a:"角ばっている",w:["丸くなっている","平たい","小さくてなめらか"],cat:"流水のはたらき"},
+    {q:"川の流れが速いところに多いのは",a:"侵食作用",w:["堆積作用","運搬作用","風化作用"],cat:"流水のはたらき"},
     {q:"食塩を水に溶かすと水溶液は",a:"透明になる",w:["白くにごる","黄色くなる","固まる"],cat:"もののとけ方"},
     {q:"食塩水から食塩を取り出す方法は",a:"蒸発させる",w:["冷やす","ろ過する","加熱する"],cat:"もののとけ方"},
     {q:"雲はどこで作られるか",a:"上空で水蒸気が冷えて",w:["海で水が温められて","山から水が蒸発して","川の水が上がって"],cat:"天気の変化"},
@@ -584,8 +637,220 @@ const socialData = {
     {q:"地図記号でXのようなマークは",a:"警察署",w:["消防署","病院","市役所"],cat:"地図の見方"},
     {q:"地図の縮尺が25000分の1のとき地図上の1cmは実際に何mか",a:"250m",w:["25m","2500m","25000m"],cat:"地図の見方"},
   ],
-  5: [],
-  6: []
+  5: [
+    {q:"日本の農業で最も多く生産されている作物は",a:"米",w:["小麦","大豆","トウモロコシ"],cat:"農業"},
+    {q:"野菜を季節より早く出荷する栽培方法を何というか",a:"促成栽培",w:["有機栽培","露地栽培","抑制栽培"],cat:"農業"},
+    {q:"食料自給率が低いと困る主な理由は",a:"輸入が止まると食料不足になるから",w:["輸出が増えすぎるから","農地が余るから","農家が儲かりすぎるから"],cat:"農業"},
+    {q:"日本の農業の問題点として正しいのは",a:"農業従事者の高齢化",w:["農地が増えすぎている","若い農家が多すぎる","農産物が余っている"],cat:"農業"},
+    {q:"日本の漁業で生産量が多い漁業の種類は",a:"沖合漁業",w:["遠洋漁業","沿岸漁業","養殖業"],cat:"水産業"},
+    {q:"養殖業で有名な真珠の産地はどこか",a:"三重県",w:["北海道","静岡県","宮城県"],cat:"水産業"},
+    {q:"200海里水域（排他的経済水域）を設けた目的は",a:"自国の水産資源を守るため",w:["観光客を呼ぶため","軍事的防衛のため","島を守るため"],cat:"水産業"},
+    {q:"水産業で魚の数が減っている主な原因は",a:"獲りすぎ（乱獲）と環境の変化",w:["魚が陸に上がっているから","海の水が増えたから","潮の流れが止まったから"],cat:"水産業"},
+    {q:"日本の工業地帯で最大の生産額を誇るのは",a:"中京工業地帯",w:["京浜工業地帯","阪神工業地帯","北九州工業地帯"],cat:"工業"},
+    {q:"自動車工業が特に盛んな都市はどれか",a:"豊田市（愛知県）",w:["神戸市","横浜市","仙台市"],cat:"工業"},
+    {q:"石油化学コンビナートが発達しやすい場所は",a:"海沿い",w:["山の中","内陸の高地","島の中心"],cat:"工業"},
+    {q:"日本の国土の約何割が山地・丘陵地か",a:"約7割",w:["約3割","約5割","約9割"],cat:"国土の地形"},
+    {q:"日本最長の川はどれか",a:"信濃川",w:["利根川","石狩川","最上川"],cat:"国土の地形"},
+    {q:"日本アルプスに含まれない山脈はどれか",a:"奥羽山脈",w:["飛騨山脈（北アルプス）","赤石山脈（南アルプス）","木曽山脈（中央アルプス）"],cat:"国土の地形"},
+    {q:"日本の人口が最も多い都道府県は",a:"東京都",w:["神奈川県","大阪府","北海道"],cat:"人口・都市"},
+    {q:"少子高齢化とはどのような現象か",a:"子どもが減り高齢者が増える社会現象",w:["人口が急増すること","外国人が増えること","都市に人が集まること"],cat:"人口・都市"},
+    {q:"日本の人口が集中している地域はどこか",a:"太平洋ベルト",w:["日本海側","北海道","山間部"],cat:"人口・都市"},
+    {q:"日本が多く輸出しているものはどれか",a:"自動車・機械類",w:["石油・天然ガス","鉄鉱石・石炭","食料品"],cat:"貿易"},
+    {q:"日本が最も多く石油を輸入している地域は",a:"中東",w:["東南アジア","北米","ヨーロッパ"],cat:"貿易"},
+    {q:"日本が輸入に頼っている資源として正しいのは",a:"石油・石炭・鉄鉱石",w:["米・野菜・果物","自動車・電気製品","漁業・農業製品"],cat:"貿易"},
+  ],
+  6: [
+    {q:"縄文時代の人々の主な食料の得方は",a:"狩り・漁・採集",w:["稲作で育てた米","牧畜で育てた牛","輸入した食料"],cat:"縄文・弥生"},
+    {q:"弥生時代に日本に広まった農業は",a:"稲作",w:["畑作","牧畜","漁業"],cat:"縄文・弥生"},
+    {q:"聖徳太子が制定した十七条の憲法の目的は",a:"役人の心構えを示すため",w:["農民を守るため","外国と戦うため","貿易を増やすため"],cat:"古墳・飛鳥"},
+    {q:"奈良時代に建てられた世界最大の木造建築は",a:"東大寺の大仏殿",w:["法隆寺","平等院","清水寺"],cat:"奈良"},
+    {q:"奈良時代に農民に土地を与えた制度は",a:"班田収授法",w:["参勤交代","御成敗式目","墾田永年私財法"],cat:"奈良"},
+    {q:"平安時代に仮名文字で書かれた有名な物語は",a:"源氏物語",w:["古事記","万葉集","日本書紀"],cat:"平安"},
+    {q:"平安時代に朝廷で権力を持った一族は",a:"藤原氏",w:["源氏","平氏","足利氏"],cat:"平安"},
+    {q:"鎌倉幕府を開いた人物は",a:"源頼朝",w:["源義経","平清盛","足利尊氏"],cat:"鎌倉"},
+    {q:"鎌倉幕府の裁判の基準となった法律は",a:"御成敗式目",w:["十七条の憲法","班田収授法","武家諸法度"],cat:"鎌倉"},
+    {q:"室町幕府を開いた人物は",a:"足利尊氏",w:["源頼朝","徳川家康","豊臣秀吉"],cat:"室町・戦国"},
+    {q:"全国統一を目指したが途中で倒れた戦国武将は",a:"織田信長",w:["豊臣秀吉","徳川家康","武田信玄"],cat:"室町・戦国"},
+    {q:"江戸幕府の参勤交代の目的は",a:"大名の力を弱めるため",w:["農業を発展させるため","外国と貿易するため","文化を広めるため"],cat:"江戸"},
+    {q:"江戸時代に鎖国中も貿易を続けた国はどれか",a:"オランダと中国（清）",w:["イギリスとフランス","スペインとポルトガル","ロシアとアメリカ"],cat:"江戸"},
+    {q:"明治維新で行われた改革でないものは",a:"参勤交代の強化",w:["廃藩置県","学制の公布","地租改正"],cat:"明治"},
+    {q:"明治時代に日本が中国（清）と戦った戦争は",a:"日清戦争",w:["日露戦争","太平洋戦争","西南戦争"],cat:"明治"},
+    {q:"1945年に日本が戦争を終えるきっかけになったのは",a:"ポツダム宣言の受諾",w:["日米安保条約の締結","東京オリンピック","サンフランシスコ平和条約"],cat:"昭和"},
+    {q:"日本国憲法が公布された年は",a:"1946年",w:["1945年","1950年","1960年"],cat:"昭和"},
+    {q:"日本国憲法の三原則に含まれないものは",a:"経済の発展",w:["基本的人権の尊重","平和主義","国民主権"],cat:"昭和"},
+    {q:"高度経済成長期に問題になった公害病は",a:"水俣病",w:["インフルエンザ","コレラ","結核"],cat:"昭和"},
+    {q:"国際連合（国連）の主な目的は",a:"世界の平和と安全を守ること",w:["世界の貿易を増やすこと","宇宙開発を進めること","スポーツを振興すること"],cat:"現代"},
+  ]
+};
+
+// --- 英語データ ---
+const englishData = {
+  4: [
+    {q:"「犬」を英語で言うと",a:"dog",w:["cat","bird","fish"],cat:"動物"},
+    {q:"「猫」を英語で言うと",a:"cat",w:["dog","rabbit","bird"],cat:"動物"},
+    {q:"「鳥」を英語で言うと",a:"bird",w:["fish","cat","frog"],cat:"動物"},
+    {q:"「魚」を英語で言うと",a:"fish",w:["bird","frog","snake"],cat:"動物"},
+    {q:"「うさぎ」を英語で言うと",a:"rabbit",w:["mouse","horse","sheep"],cat:"動物"},
+    {q:"「赤」を英語で言うと",a:"red",w:["blue","green","yellow"],cat:"色"},
+    {q:"「青」を英語で言うと",a:"blue",w:["red","pink","black"],cat:"色"},
+    {q:"「黄色」を英語で言うと",a:"yellow",w:["orange","green","purple"],cat:"色"},
+    {q:"「白」を英語で言うと",a:"white",w:["black","gray","brown"],cat:"色"},
+    {q:"「緑」を英語で言うと",a:"green",w:["blue","yellow","red"],cat:"色"},
+    {q:"「りんご」を英語で言うと",a:"apple",w:["orange","banana","grape"],cat:"食べ物"},
+    {q:"「バナナ」を英語で言うと",a:"banana",w:["apple","mango","melon"],cat:"食べ物"},
+    {q:"「パン」を英語で言うと",a:"bread",w:["rice","cake","milk"],cat:"食べ物"},
+    {q:"「牛乳」を英語で言うと",a:"milk",w:["juice","water","tea"],cat:"食べ物"},
+    {q:"「たまご」を英語で言うと",a:"egg",w:["meat","fish","bread"],cat:"食べ物"},
+    {q:"朝のあいさつは",a:"Good morning.",w:["Good night.","Good evening.","Good afternoon."],cat:"あいさつ"},
+    {q:"「ありがとう」を英語で言うと",a:"Thank you.",w:["Sorry.","Please.","Excuse me."],cat:"あいさつ"},
+    {q:"「さようなら」を英語で言うと",a:"Good-bye.",w:["Hello.","Hi.","How are you?"],cat:"あいさつ"},
+    {q:"「1」を英語で言うと",a:"one",w:["two","three","four"],cat:"数"},
+    {q:"「5」を英語で言うと",a:"five",w:["four","six","seven"],cat:"数"},
+    {q:"「10」を英語で言うと",a:"ten",w:["eight","nine","eleven"],cat:"数"},
+    {q:"「20」を英語で言うと",a:"twenty",w:["twelve","fifteen","thirty"],cat:"数"},
+    {q:"「学校」を英語で言うと",a:"school",w:["park","house","store"],cat:"場所"},
+    {q:"「本」を英語で言うと",a:"book",w:["pen","desk","chair"],cat:"文房具"},
+    {q:"「大きい」を英語で言うと",a:"big",w:["small","long","short"],cat:"形容詞"},
+    {q:"「小さい」を英語で言うと",a:"small",w:["big","tall","long"],cat:"形容詞"},
+    {q:"「好きです」を英語で言うと",a:"I like ~.",w:["I want ~.","I have ~.","I go ~."],cat:"日常表現"},
+    {q:"「わたしは〜です」を英語で言うと",a:"I am ~.",w:["You are ~.","He is ~.","We are ~."],cat:"日常表現"},
+    {q:"「〜がほしい」を英語で言うと",a:"I want ~.",w:["I like ~.","I have ~.","I can ~."],cat:"日常表現"},
+    {q:"「〜を持っている」を英語で言うと",a:"I have ~.",w:["I like ~.","I want ~.","I go ~."],cat:"日常表現"},
+  ],
+  5: [
+    {q:"「算数」を英語で言うと",a:"math",w:["science","music","art"],cat:"教科"},
+    {q:"「理科」を英語で言うと",a:"science",w:["math","history","music"],cat:"教科"},
+    {q:"「音楽」を英語で言うと",a:"music",w:["art","P.E.","science"],cat:"教科"},
+    {q:"「体育」を英語で言うと",a:"P.E.",w:["music","art","math"],cat:"教科"},
+    {q:"「サッカー」を英語で言うと",a:"soccer",w:["baseball","tennis","basketball"],cat:"スポーツ"},
+    {q:"「野球」を英語で言うと",a:"baseball",w:["soccer","volleyball","tennis"],cat:"スポーツ"},
+    {q:"「バスケットボール」を英語で言うと",a:"basketball",w:["volleyball","baseball","soccer"],cat:"スポーツ"},
+    {q:"「水泳」を英語で言うと",a:"swimming",w:["running","jumping","cycling"],cat:"スポーツ"},
+    {q:"「公園」を英語で言うと",a:"park",w:["school","library","station"],cat:"場所"},
+    {q:"「図書館」を英語で言うと",a:"library",w:["hospital","park","museum"],cat:"場所"},
+    {q:"「病院」を英語で言うと",a:"hospital",w:["library","school","park"],cat:"場所"},
+    {q:"「駅」を英語で言うと",a:"station",w:["airport","park","hospital"],cat:"場所"},
+    {q:"「速い」を英語で言うと",a:"fast",w:["slow","hard","soft"],cat:"形容詞"},
+    {q:"「難しい」を英語で言うと",a:"difficult",w:["easy","funny","boring"],cat:"形容詞"},
+    {q:"「おもしろい」を英語で言うと",a:"interesting",w:["boring","difficult","scary"],cat:"形容詞"},
+    {q:"「月曜日」を英語で言うと",a:"Monday",w:["Sunday","Tuesday","Wednesday"],cat:"曜日・月"},
+    {q:"「金曜日」を英語で言うと",a:"Friday",w:["Thursday","Saturday","Wednesday"],cat:"曜日・月"},
+    {q:"「日曜日」を英語で言うと",a:"Sunday",w:["Monday","Saturday","Friday"],cat:"曜日・月"},
+    {q:"「1月」を英語で言うと",a:"January",w:["February","March","April"],cat:"曜日・月"},
+    {q:"「3月」を英語で言うと",a:"March",w:["January","May","June"],cat:"曜日・月"},
+    {q:"「夏」を英語で言うと",a:"summer",w:["winter","spring","autumn"],cat:"季節"},
+    {q:"「冬」を英語で言うと",a:"winter",w:["summer","spring","autumn"],cat:"季節"},
+    {q:"「〜できる」を英語で言うと",a:"can",w:["must","will","should"],cat:"文の構造"},
+    {q:"「毎日」を英語で言うと",a:"every day",w:["every week","sometimes","never"],cat:"文の構造"},
+    {q:"「〜が好きではない」を英語で言うと",a:"I don't like ~.",w:["I like ~.","I want ~.","I can ~."],cat:"文の構造"},
+    {q:"「何時ですか」を英語で言うと",a:"What time is it?",w:["Where is it?","How are you?","What day is it?"],cat:"日常表現"},
+    {q:"「何曜日ですか」を英語で言うと",a:"What day is it?",w:["What time is it?","What is it?","Where is it?"],cat:"日常表現"},
+    {q:"「〜が得意です」を英語で言うと",a:"I'm good at ~.",w:["I like ~.","I can ~.","I want ~."],cat:"日常表現"},
+    {q:"「いくらですか」を英語で言うと",a:"How much is it?",w:["What is it?","Where is it?","How is it?"],cat:"日常表現"},
+    {q:"「どこですか」を英語で言うと",a:"Where is ~?",w:["What is ~?","How is ~?","When is ~?"],cat:"日常表現"},
+  ],
+  6: [
+    {q:"「行く」の過去形（went / go / goes）",a:"went",w:["go","goes","going"],cat:"過去形"},
+    {q:"「食べる」の過去形（eat）",a:"ate",w:["eat","eats","eating"],cat:"過去形"},
+    {q:"「見る」の過去形（see）",a:"saw",w:["see","sees","seeing"],cat:"過去形"},
+    {q:"「書く」の過去形（write）",a:"wrote",w:["write","writes","writing"],cat:"過去形"},
+    {q:"「来る」の過去形（come）",a:"came",w:["come","comes","coming"],cat:"過去形"},
+    {q:"「〜するつもりです」を英語で言うと",a:"I will ~.",w:["I can ~.","I must ~.","I would ~."],cat:"未来・助動詞"},
+    {q:"「〜する予定です」を英語で言うと",a:"I am going to ~.",w:["I went to ~.","I want to ~.","I like to ~."],cat:"未来・助動詞"},
+    {q:"「〜しなければならない」を英語で言うと",a:"I must ~.",w:["I can ~.","I will ~.","I may ~."],cat:"未来・助動詞"},
+    {q:"「〜してもよい」を英語で言うと",a:"You may ~.",w:["You must ~.","You will ~.","You can't ~."],cat:"未来・助動詞"},
+    {q:"「右に曲がってください」を英語で言うと",a:"Turn right.",w:["Turn left.","Go straight.","Stop here."],cat:"道案内"},
+    {q:"「まっすぐ行ってください」を英語で言うと",a:"Go straight.",w:["Turn right.","Turn left.","Go back."],cat:"道案内"},
+    {q:"「〜の近くに」を英語で言うと",a:"near ~",w:["far from ~","behind ~","in front of ~"],cat:"道案内"},
+    {q:"「医者」を英語で言うと",a:"doctor",w:["teacher","nurse","pilot"],cat:"職業"},
+    {q:"「教師」を英語で言うと",a:"teacher",w:["doctor","police officer","cook"],cat:"職業"},
+    {q:"「料理人」を英語で言うと",a:"cook / chef",w:["farmer","driver","scientist"],cat:"職業"},
+    {q:"「パイロット」を英語で言うと",a:"pilot",w:["doctor","teacher","nurse"],cat:"職業"},
+    {q:"「彼は〜が好きです」（三単現）の正しい形は",a:"He likes ~.",w:["He like ~.","He liked ~.","He liking ~."],cat:"文法"},
+    {q:"「〜より大きい」（比較級）を英語で言うと",a:"bigger than ~",w:["big than ~","more big ~","biggest ~"],cat:"比較"},
+    {q:"「一番大きい」（最上級）を英語で言うと",a:"the biggest",w:["bigger than","very big","most big"],cat:"比較"},
+    {q:"「〜と同じくらい大きい」を英語で言うと",a:"as big as ~",w:["bigger than ~","the biggest ~","very big ~"],cat:"比較"},
+    {q:"「昨日」を英語で言うと",a:"yesterday",w:["today","tomorrow","last week"],cat:"時の表現"},
+    {q:"「来年」を英語で言うと",a:"next year",w:["last year","this year","every year"],cat:"時の表現"},
+    {q:"「〜前に」を英語で言うと",a:"~ ago",w:["~ later","~ before","~ after"],cat:"時の表現"},
+    {q:"「いつ〜しますか」を英語で言うと",a:"When do you ~?",w:["Where do you ~?","Why do you ~?","How do you ~?"],cat:"疑問文"},
+    {q:"「なぜ〜しますか」を英語で言うと",a:"Why do you ~?",w:["When do you ~?","Where do you ~?","How do you ~?"],cat:"疑問文"},
+    {q:"「どのように〜しますか」を英語で言うと",a:"How do you ~?",w:["When do you ~?","Where do you ~?","Why do you ~?"],cat:"疑問文"},
+    {q:"「私の夢は〜することです」を英語で言うと",a:"My dream is to ~.",w:["My dream was ~.","I dream ~.","I want ~."],cat:"自己表現"},
+    {q:"「彼女は今〜しています」（現在進行形）を英語で言うと",a:"She is ~ing.",w:["She ~s.","She ~ed.","She will ~."],cat:"現在進行形"},
+    {q:"「〜が得意ではありません」を英語で言うと",a:"I'm not good at ~.",w:["I'm good at ~.","I don't like ~.","I can't ~."],cat:"自己表現"},
+    {q:"「これはあなたのですか」を英語で言うと",a:"Is this yours?",w:["Is this mine?","Is that theirs?","Are these yours?"],cat:"文法"},
+  ]
+};
+
+// --- 国語データ ---
+const japaneseData = {
+  4: [
+    {q:"「石の上にも三年」の意味は",a:"辛くても続ければ成功する",w:["石は三年で砕ける","のんびりしすぎると失敗する","岩の上に座ってはいけない"],cat:"ことわざ"},
+    {q:"「七転び八起き」の意味は",a:"何度失敗してもあきらめない",w:["7回転んで8回起きるのは不思議","転ばないように気をつける","8人で七転びする遊び"],cat:"ことわざ"},
+    {q:"「急がば回れ」の意味は",a:"急ぐときほど確実な方法を選ぶべき",w:["急いで走れば間に合う","急がないほうがよい","遠回りはやめるべき"],cat:"ことわざ"},
+    {q:"「猿も木から落ちる」の意味は",a:"名人でも失敗することがある",w:["猿は木から落ちない","失敗は許されない","猿は木が苦手"],cat:"ことわざ"},
+    {q:"「二度あることは三度ある」の意味は",a:"同じことが繰り返し起こりやすい",w:["二回までしか許されない","三回目は必ず成功する","二度目の失敗はない"],cat:"ことわざ"},
+    {q:"「灯台もと暗し」の意味は",a:"身近なことは意外と気がつかない",w:["灯台は暗い場所にある","灯台の近くは明るい","灯台は高いところにある"],cat:"ことわざ"},
+    {q:"「頭が上がらない」の意味は",a:"相手に頭が下がるほど感謝・恐縮している",w:["頭が痛い","背が高くなれない","首が曲がらない"],cat:"慣用句"},
+    {q:"「鼻が高い」の意味は",a:"得意で誇らしい気持ち",w:["鼻が長くなった","風邪をひいた","鼻が曲がっている"],cat:"慣用句"},
+    {q:"「足を引っ張る」の意味は",a:"他人の邪魔をする",w:["実際に足をつかむ","速く走る","足の力を強くする"],cat:"慣用句"},
+    {q:"「目をかける」の意味は",a:"かわいがって面倒を見る",w:["目に何かがついた","見張る","目の手術をする"],cat:"慣用句"},
+    {q:"「手を焼く」の意味は",a:"扱いに困って苦労する",w:["料理で手をやけどする","手が熱い","素手で料理する"],cat:"慣用句"},
+    {q:"「口が軽い」の意味は",a:"秘密をすぐ人に話してしまう",w:["声が小さい","口が細い","食べるのが遅い"],cat:"慣用句"},
+    {q:"「胸を張る」の意味は",a:"自信を持って誇らしく振る舞う",w:["胸の筋肉を鍛える","胸が痛い","背中が曲がっている"],cat:"慣用句"},
+    {q:"「のれんに腕押し」の意味は",a:"手ごたえがなく効き目がない",w:["のれんは頑丈である","力が強い","努力が報われる"],cat:"ことわざ"},
+    {q:"「形容詞」とはどんな言葉か",a:"ものの様子や状態を表す（例：大きい）",w:["動作を表す（例：走る）","ものの名前を表す（例：犬）","接続する（例：しかし）"],cat:"文法"},
+    {q:"「動詞」とはどんな言葉か",a:"動作や状態を表す（例：走る・いる）",w:["ものの名前を表す（例：机）","様子を表す（例：赤い）","場所を表す（例：ここ）"],cat:"文法"},
+    {q:"「名詞」とはどんな言葉か",a:"ものや人・場所の名前を表す",w:["様子を表す言葉","動作を表す言葉","接続の役割をする言葉"],cat:"文法"},
+    {q:"「読点（、）」の使い方として正しいのは",a:"文の意味を区切りやすくするために使う",w:["文の終わりに必ず使う","段落の最初に使う","名前の後に必ず使う"],cat:"文法"},
+    {q:"主語・述語の組み合わせで正しいのは",a:"「犬が走る」→犬=主語、走る=述語",w:["「犬が走る」→走る=主語、犬=述語","「犬が走る」→どちらも主語","「犬が走る」→どちらも述語"],cat:"文法"},
+    {q:"「ていねい語」の例として正しいのは",a:"「食べます」「行きます」",w:["「食べる」「行く」","「召し上がる」「いらっしゃる」","「食べちゃう」「行っちゃう」"],cat:"文法"},
+  ],
+  5: [
+    {q:"「腕を磨く」の意味は",a:"技術や腕前を鍛え上げる",w:["腕をきれいにする","腕の筋肉をつける","腕がかゆい"],cat:"慣用句"},
+    {q:"「骨を折る」の意味は",a:"苦労して力を尽くす",w:["実際に骨が折れる","楽をする","骨の手術をする"],cat:"慣用句"},
+    {q:"「水に流す」の意味は",a:"過去のことをなかったことにする",w:["川に物を捨てる","水で汚れを落とす","川が増水する"],cat:"慣用句"},
+    {q:"「目が肥える」の意味は",a:"良いものを見分ける力がある",w:["目が大きい","目が疲れている","視力が高い"],cat:"慣用句"},
+    {q:"「耳を疑う」の意味は",a:"信じられないことを聞いて驚く",w:["耳が聞こえにくい","耳の病気になる","聞き間違いをする"],cat:"慣用句"},
+    {q:"「気が置けない」の意味は",a:"遠慮なく打ち解けられる（親しい）",w:["油断できない","気分が悪い","気が短い"],cat:"慣用句"},
+    {q:"「情けは人のためならず」の意味は",a:"人に親切にすると自分にも返ってくる",w:["人に親切にしすぎない方がよい","情けをかけるのは無駄だ","親切は自分のためではない"],cat:"ことわざ"},
+    {q:"「棚からぼたもち」の意味は",a:"思いがけない幸運が舞い込む",w:["努力すれば報われる","ぼたもちは棚に置くもの","棚から物が落ちると危ない"],cat:"ことわざ"},
+    {q:"「能ある鷹は爪を隠す」の意味は",a:"実力のある人は自分の力をひけらかさない",w:["タカは爪を持っていない","能力を隠すのは悪いことだ","鷹は爪が得意"],cat:"ことわざ"},
+    {q:"「転んでもただでは起きない」の意味は",a:"失敗しても何か利益を得ようとする",w:["転ばないように気をつける","失敗を繰り返す","何もしない"],cat:"ことわざ"},
+    {q:"「一石二鳥」の意味は",a:"一つのことで二つの利益を得る",w:["一羽の鳥が石を二個持つ","二つのことを同時にする","石と鳥は仲が悪い"],cat:"四字熟語"},
+    {q:"「自業自得」の意味は",a:"自分の行いの結果を自分で受ける",w:["自分でやった仕事は自分のもの","他人のせいで苦しむ","得をするために仕事する"],cat:"四字熟語"},
+    {q:"「臨機応変」の意味は",a:"その場の状況に合わせて対応する",w:["機械を使って変える","いつも同じ対応をする","変化を嫌う"],cat:"四字熟語"},
+    {q:"「以心伝心」の意味は",a:"言葉がなくてもお互いの気持ちが伝わる",w:["手紙で気持ちを伝える","心が痛む","電話で気持ちを話す"],cat:"四字熟語"},
+    {q:"「大器晩成」の意味は",a:"優れた人物はゆっくりと大成する",w:["大きな器は遅く作られる","早熟な人が成功する","器が大きいほど価値がある"],cat:"四字熟語"},
+    {q:"「喜怒哀楽」の意味は",a:"喜び・怒り・悲しみ・楽しみの感情全般",w:["4種類の色","4つの季節","音楽の4拍子"],cat:"四字熟語"},
+    {q:"「試行錯誤」の意味は",a:"試みと失敗を繰り返して解決策を見つける",w:["一度で正解を出す","失敗してあきらめる","他人の方法を真似る"],cat:"四字熟語"},
+    {q:"「一長一短」の意味は",a:"長所もあれば短所もある",w:["一つのことを長くしたり短くしたりする","長所しかない","短所しかない"],cat:"四字熟語"},
+    {q:"「起死回生」の意味は",a:"絶望的な状況から立て直すこと",w:["死んでから生き返る","元気に生きること","何度も失敗すること"],cat:"四字熟語"},
+    {q:"「四苦八苦」の意味は",a:"非常に苦労すること",w:["4人で8つの苦しみを分担する","苦しいことが4つある","8人で苦しむ"],cat:"四字熟語"},
+  ],
+  6: [
+    {q:"「一期一会」の意味は",a:"一生に一度の出会いを大切にする",w:["一年に一度会う","一回だけのチャンス","一つの期間に一つのことをする"],cat:"四字熟語"},
+    {q:"「温故知新」の意味は",a:"過去を学んで新しい知識を得る",w:["古いものより新しいものがよい","温かい気持ちで人と接する","昔話を大切にする"],cat:"四字熟語"},
+    {q:"「五里霧中」の意味は",a:"どうしたらよいか見当がつかない状態",w:["霧の中を5里歩く","霧が深くて危ない","遠い場所に霧がある"],cat:"四字熟語"},
+    {q:"「因果応報」の意味は",a:"よい行いはよい結果、悪い行いは悪い結果をもたらす",w:["原因があれば必ず結果がある","良い行いをしても報われない","悪いことは自然に消える"],cat:"四字熟語"},
+    {q:"「馬耳東風」の意味は",a:"人の意見を聞き流してまったく気にしない",w:["馬は東に向かって走る","耳の聞こえが悪い","風が東から吹く"],cat:"四字熟語"},
+    {q:"「付和雷同」の意味は",a:"自分の考えがなく他人の意見に同調する",w:["雷と雨が一緒に来る","強い意見を持つ","雷のように怒る"],cat:"四字熟語"},
+    {q:"「七転八倒」の意味は",a:"ひどい苦痛で転げ回ること",w:["7回転んで8回倒れる","転び続けること","七つのことで倒れる"],cat:"四字熟語"},
+    {q:"「虎の威を借る狐」の意味は",a:"権力者の力を借りて威張る小者",w:["虎と狐は仲がよい","狐は虎より強い","強いものに味方する"],cat:"ことわざ"},
+    {q:"「蛙の子は蛙」の意味は",a:"子は親に似るものだ",w:["カエルは水の中で育つ","子どもは親より優れる","カエルは成長しない"],cat:"ことわざ"},
+    {q:"「覆水盆に返らず」の意味は",a:"一度起きたことは元に戻せない",w:["水はいつか蒸発する","こぼした水を集めると役立つ","水は大切にすべきだ"],cat:"ことわざ"},
+    {q:"「出る杭は打たれる」の意味は",a:"目立つ人は周囲から攻撃を受けやすい",w:["出てきた杭は叩いて直す","目立つことは良いことだ","杭は出てから打つ"],cat:"ことわざ"},
+    {q:"「食べる」の尊敬語は",a:"召し上がる",w:["いただく","食べられる","食べてやる"],cat:"敬語"},
+    {q:"「もらう」の謙譲語は",a:"いただく",w:["さしあげる","くださる","おもらいする"],cat:"敬語"},
+    {q:"「来る」の尊敬語は",a:"いらっしゃる",w:["参る","うかがう","来させる"],cat:"敬語"},
+    {q:"「言う」の謙譲語は",a:"申す",w:["おっしゃる","話される","言われる"],cat:"敬語"},
+    {q:"「先生に質問する」を敬語で言うと",a:"先生におたずねする（謙譲語）",w:["先生に話しなさる","先生が質問する","先生にきいてやる"],cat:"敬語"},
+    {q:"「体言止め」とはどんな表現か",a:"文末を名詞（体言）で終わらせる表現",w:["動詞で文末を終わらせる","形容詞で文末を終わらせる","文末を省略する"],cat:"文法"},
+    {q:"「受け身（受動態）」の例として正しいのは",a:"「犬に手をかまれた」",w:["「犬が手をかんだ」","「犬と手をつないだ」","「犬のそばに手がある」"],cat:"文法"},
+    {q:"「倒置法」とはどんな表現か",a:"語順を通常と逆にする表現（強調のため）",w:["同じ言葉を繰り返す表現","句読点をなくす表現","方言を使う表現"],cat:"文法"},
+    {q:"「比喩（直喩）」の例として正しいのは",a:"「彼は山のように大きい」",w:["「山が見える」","「山が好きだ」","「山に登った」"],cat:"文法"},
+  ]
 };
 
 // ================================================================
@@ -710,13 +975,13 @@ const SUBJECTS = [
   {id:'math',   name:'算数', icon:'🔢', color:'#f59e0b',
    available:{4:true,5:true,6:true}},
   {id:'science',name:'理科', icon:'🔬', color:'#10b981',
-   available:{4:false,5:true,6:true}},
+   available:{4:true,5:true,6:true}},
   {id:'social', name:'社会', icon:'🌍', color:'#8b5cf6',
-   available:{4:true,5:false,6:false}},
+   available:{4:true,5:true,6:true}},
   {id:'english',name:'英語', icon:'🔤', color:'#ec4899',
-   available:{4:false,5:false,6:false}},
-  {id:'japanese',name:'国語',icon:'📝', color:'#64748b',
-   available:{4:false,5:false,6:false}},
+   available:{4:true,5:true,6:true}},
+  {id:'japanese',name:'国語',icon:'📝', color:'#334155',
+   available:{4:true,5:true,6:true}},
 ];
 
 // ================================================================
@@ -796,9 +1061,11 @@ function selectSubject(subjectId) {
 
 function getCats(subjectId) {
   let data;
-  if (subjectId==='math') data=mathData[currentGrade]||[];
-  else if (subjectId==='science') data=scienceData[currentGrade]||[];
-  else if (subjectId==='social') data=socialData[currentGrade]||[];
+  if (subjectId==='math')     data=mathData[currentGrade]||[];
+  else if (subjectId==='science')  data=scienceData[currentGrade]||[];
+  else if (subjectId==='social')   data=socialData[currentGrade]||[];
+  else if (subjectId==='english')  data=englishData[currentGrade]||[];
+  else if (subjectId==='japanese') data=japaneseData[currentGrade]||[];
   else return [];
   return [...new Set(data.map(q=>q.cat))];
 }
@@ -831,10 +1098,12 @@ function selectCat(cat, btn) {
 // ===== テスト制御 =====
 // ================================================================
 function getPool() {
-  if (currentSubject==='kanji')   return kanjiData[currentGrade]||[];
-  if (currentSubject==='math')    return mathData[currentGrade]||[];
-  if (currentSubject==='science') return scienceData[currentGrade]||[];
-  if (currentSubject==='social')  return socialData[currentGrade]||[];
+  if (currentSubject==='kanji')    return kanjiData[currentGrade]||[];
+  if (currentSubject==='math')     return mathData[currentGrade]||[];
+  if (currentSubject==='science')  return scienceData[currentGrade]||[];
+  if (currentSubject==='social')   return socialData[currentGrade]||[];
+  if (currentSubject==='english')  return englishData[currentGrade]||[];
+  if (currentSubject==='japanese') return japaneseData[currentGrade]||[];
   return [];
 }
 
@@ -863,8 +1132,11 @@ function showQuestion() {
   const s = SUBJECTS.find(x=>x.id===currentSubject);
   const badgeClass = currentSubject==='kanji'
     ? (selectedMode==='reading'?'badge-reading':'badge-writing')
-    : currentSubject==='math' ? 'badge-math'
-    : currentSubject==='science' ? 'badge-sci' : 'badge-soc';
+    : currentSubject==='math'     ? 'badge-math'
+    : currentSubject==='science'  ? 'badge-sci'
+    : currentSubject==='social'   ? 'badge-soc'
+    : currentSubject==='english'  ? 'badge-eng'
+    : 'badge-jpn';
   document.getElementById('q-badge').innerHTML =
     `<span class="badge ${badgeClass}">${s.icon}${s.name}</span>`;
 
@@ -993,6 +1265,17 @@ function showResults() {
           <div class="w-mine">あなた：${r.userAnswer}</div>
         </div>
       </div>`).join('');
+}
+
+function confirmQuit() {
+  document.getElementById('quit-overlay').style.display = 'flex';
+}
+function closeQuit() {
+  document.getElementById('quit-overlay').style.display = 'none';
+}
+function doQuit() {
+  document.getElementById('quit-overlay').style.display = 'none';
+  showScreen('grade-screen');
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
