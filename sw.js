@@ -1,6 +1,6 @@
-const CACHE = 'kanji-test-v1';
+const CACHE = 'gakushu-app-v1';
 const FILES = [
-  './kanji-test.html',
+  './index.html',
   './manifest.json',
   './icon.svg',
 ];

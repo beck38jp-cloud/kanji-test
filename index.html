@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>小学校学習アプリ</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="学習アプリ">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root {
+      --primary:#6366f1; --primary-dark:#4f46e5;
+      --success:#22c55e; --error:#ef4444;
+      --bg:#f5f3ff; --card:#fff; --text:#1e293b; --muted:#64748b;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Meiryo',sans-serif;
+      background:var(--bg); color:var(--text); min-height:100vh;
+      display:flex; justify-content:center;
+      padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+    }
+    #app{width:100%;max-width:600px}
+    .screen{display:none}
+    .screen.active{display:block}
+    .card{background:var(--card);border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:12px}
+    h1{font-size:1.7rem;font-weight:700;text-align:center;margin-bottom:6px}
+    .subtitle{text-align:center;color:var(--muted);margin-bottom:24px;font-size:.9rem}
+
+    /* 学年・教科グリッド */
+    .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:8px}
+    .subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+    .grade-btn,.subject-btn{
+      border:2px solid #e2e8f0;border-radius:14px;background:#fff;
+      cursor:pointer;padding:16px 8px;text-align:center;font-family:inherit;
+      transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px
+    }
+    .grade-btn .icon,.subject-btn .icon{font-size:2rem}
+    .grade-btn .label,.subject-btn .label{font-size:.95rem;font-weight:700}
+    .subject-btn .badge{font-size:.7rem;padding:2px 8px;border-radius:99px;background:#f1f5f9;color:var(--muted)}
+    .grade-btn:hover,.subject-btn:not(.disabled):hover{border-color:var(--primary);background:#f5f3ff;transform:translateY(-2px)}
+    .grade-btn.g4:hover,.grade-btn.g4.selected{border-color:#f59e0b;background:#fffbeb}
+    .grade-btn.g5:hover,.grade-btn.g5.selected{border-color:#10b981;background:#f0fdf4}
+    .grade-btn.g6:hover,.grade-btn.g6.selected{border-color:#6366f1;background:#f5f3ff}
+    .subject-btn.disabled{opacity:.5;cursor:not-allowed}
+    .subject-btn.disabled .badge{background:#fee2e2;color:#ef4444}
+
+    /* スタート画面 */
+    .back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.9rem;
+      border:none;background:none;cursor:pointer;margin-bottom:16px;font-family:inherit;padding:4px 0}
+    .back-btn:hover{color:var(--primary)}
+    .screen-title{font-size:1.2rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+    .mode-btn{
+      padding:16px;border:2px solid #e2e8f0;border-radius:12px;
+      background:#fff;cursor:pointer;text-align:center;font-family:inherit;transition:all .15s
+    }
+    .mode-btn .icon{font-size:1.5rem;display:block;margin-bottom:4px}
+    .mode-btn .label{font-size:.95rem;font-weight:700;display:block}
+    .mode-btn .desc{font-size:.75rem;color:var(--muted);display:block;margin-top:2px}
+    .mode-btn:hover{border-color:var(--primary)}
+    .mode-btn.selected{border-color:var(--primary);background:#f5f3ff}
+    .count-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .count-btn{
+      padding:8px 14px;border:2px solid #e2e8f0;border-radius:8px;
+      background:#fff;cursor:pointer;font-weight:600;font-family:inherit;transition:all .15s
+    }
+    .count-btn.selected{border-color:var(--primary);background:#f5f3ff;color:var(--primary)}
+    .section-label{font-size:.85rem;font-weight:700;color:var(--muted);margin-bottom:8px}
+    .cat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .cat-btn{
+      padding:7px 14px;border:2px solid #e2e8f0;border-radius:8px;
+      background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;font-family:inherit;transition:all .15s
+    }
+    .cat-btn.selected{border-color:var(--primary);background:#f5f3ff;color:var(--primary)}
+    .start-btn{
+      width:100%;padding:16px;font-size:1.1rem;
+      background:var(--primary);color:#fff;border:none;border-radius:12px;
+      cursor:pointer;font-weight:700;font-family:inherit;transition:all .15s
+    }
+    .start-btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+    /* クイズ画面 */
+    .quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:.85rem;color:var(--muted)}
+    .progress-bar{height:8px;background:#e2e8f0;border-radius:4px;margin-bottom:20px;overflow:hidden}
+    .progress-fill{height:100%;background:var(--primary);border-radius:4px;transition:width .3s}
+    .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:600}
+    .badge-reading{background:#dbeafe;color:#1d4ed8}
+    .badge-writing{background:#dcfce7;color:#166534}
+    .badge-math{background:#fef3c7;color:#92400e}
+    .badge-sci{background:#f0fdf4;color:#15803d}
+    .badge-soc{background:#fdf4ff;color:#7e22ce}
+    .q-hint{text-align:center;color:var(--muted);margin-bottom:10px;font-size:.85rem}
+    .q-text{font-size:1.8rem;text-align:center;margin:16px 0;line-height:1.6}
+    .q-sub{font-size:1.1rem;font-weight:700;text-align:center;margin-bottom:14px;color:#475569}
+    .hl{color:var(--primary);font-weight:700;border-bottom:3px solid var(--primary)}
+    .answer-input{
+      width:100%;padding:14px;font-size:16px;
+      border:2px solid #e2e8f0;border-radius:10px;text-align:center;
+      outline:none;transition:border-color .2s;font-family:inherit;margin-bottom:10px
+    }
+    .answer-input:focus{border-color:var(--primary)}
+    .answer-input.correct{border-color:var(--success);background:#f0fdf4}
+    .answer-input.incorrect{border-color:var(--error);background:#fef2f2}
+    .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .choice-btn{
+      padding:16px 8px;font-size:1.1rem;
+      border:2px solid #e2e8f0;border-radius:10px;background:#fff;
+      cursor:pointer;font-family:inherit;transition:all .15s;line-height:1.4
+    }
+    .choice-btn:hover:not(:disabled){border-color:var(--primary);background:#f5f3ff;transform:translateY(-1px)}
+    .choice-btn.correct{border-color:var(--success)!important;background:#f0fdf4!important}
+    .choice-btn.incorrect{border-color:var(--error)!important;background:#fef2f2!important}
+    .choice-btn:disabled{cursor:default;transform:none}
+    .feedback{text-align:center;font-size:1rem;font-weight:600;margin:12px 0;min-height:24px}
+    .feedback.correct{color:var(--success)}
+    .feedback.incorrect{color:var(--error)}
+    .next-btn{
+      width:100%;padding:14px;font-size:1rem;background:#475569;color:#fff;
+      border:none;border-radius:10px;cursor:pointer;font-weight:600;font-family:inherit;display:none;margin-top:4px
+    }
+    .next-btn:hover{background:#334155}
+    .check-btn{
+      width:100%;padding:14px;font-size:1rem;background:var(--primary);color:#fff;
+      border:none;border-radius:10px;cursor:pointer;font-weight:600;font-family:inherit
+    }
+    .check-btn:hover{background:var(--primary-dark)}
+
+    /* 結果画面 */
+    .score-big{font-size:3.5rem;font-weight:700;text-align:center;color:var(--primary);margin:16px 0 4px}
+    .score-pct{text-align:center;color:var(--muted);margin-bottom:4px}
+    .score-msg{text-align:center;font-weight:600;font-size:1.05rem;margin-bottom:24px}
+    .wrong-title{font-size:.95rem;font-weight:700;border-bottom:2px solid #f1f5f9;padding-bottom:8px;margin-bottom:8px}
+    .wrong-list{max-height:300px;overflow-y:auto}
+    .wrong-item{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 4px;border-bottom:1px solid #f8fafc;gap:8px}
+    .wrong-item .w-q{font-size:1rem;font-weight:700;min-width:80px}
+    .wrong-item .w-hint{font-size:.75rem;color:var(--muted);margin-top:2px}
+    .wrong-item .w-ans{text-align:right;font-size:.85rem;color:#059669}
+    .wrong-item .w-mine{color:var(--error);font-size:.8rem}
+    .all-correct{text-align:center;color:var(--success);padding:20px;font-size:1.05rem;font-weight:600}
+    .result-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+    .btn-retry{padding:14px;background:var(--primary);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-family:inherit;font-size:.95rem}
+    .btn-home{padding:14px;background:#f1f5f9;color:var(--text);border:none;border-radius:10px;cursor:pointer;font-weight:700;font-family:inherit;font-size:.95rem}
+  </style>
+</head>
+<body>
+<div id="app">
+
+<!-- ① 学年選択 -->
+<div id="grade-screen" class="screen active">
+  <div class="card">
+    <h1>📚 小学校<br>学習アプリ</h1>
+    <p class="subtitle">学年を選んでください</p>
+    <div class="grade-grid">
+      <button class="grade-btn g4" onclick="selectGrade(4)">
+        <span class="icon">🌱</span>
+        <span class="label">4年生</span>
+      </button>
+      <button class="grade-btn g5" onclick="selectGrade(5)">
+        <span class="icon">🌿</span>
+        <span class="label">5年生</span>
+      </button>
+      <button class="grade-btn g6" onclick="selectGrade(6)">
+        <span class="icon">🌳</span>
+        <span class="label">6年生</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ② 教科選択 -->
+<div id="subject-screen" class="screen">
+  <div class="card">
+    <button class="back-btn" onclick="showScreen('grade-screen')">◀ 学年選択に戻る</button>
+    <div class="screen-title" id="subject-title">4年生 — 教科を選ぶ</div>
+    <div class="subject-grid" id="subject-grid"></div>
+  </div>
+</div>
+
+<!-- ③ スタート -->
+<div id="start-screen" class="screen">
+  <div class="card">
+    <button class="back-btn" onclick="showScreen('subject-screen')">◀ 教科選択に戻る</button>
+    <div class="screen-title" id="start-title"></div>
+    <div id="start-options"></div>
+    <button class="start-btn" onclick="startTest()">テスト開始 →</button>
+  </div>
+</div>
+
+<!-- ④ クイズ -->
+<div id="quiz-screen" class="screen">
+  <div class="card">
+    <div class="quiz-meta">
+      <span id="q-counter">1 / 20</span>
+      <span id="q-score">正解: 0</span>
+      <span id="q-badge"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div id="question-area"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題 →</button>
+  </div>
+</div>
+
+<!-- ⑤ 結果 -->
+<div id="results-screen" class="screen">
+  <div class="card">
+    <h1>テスト結果</h1>
+    <div class="score-big" id="res-score"></div>
+    <div class="score-pct" id="res-pct"></div>
+    <div class="score-msg" id="res-msg"></div>
+    <div class="wrong-title">間違えた問題</div>
+    <div class="wrong-list" id="wrong-list"></div>
+    <div class="result-btns">
+      <button class="btn-retry" onclick="startTest()">もう一度</button>
+      <button class="btn-home" onclick="showScreen('grade-screen')">ホームへ</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+<script>
+// ================================================================
+// ===== データ定義 =====
+// ================================================================
+
+// --- 漢字データ（word:単語, reading:読み, hint:ヒント文）---
+const kanjiData = {
+  4: [
+    {word:"案内",reading:"あんない",hint:"___係に聞いた"},
+    {word:"以上",reading:"いじょう",hint:"合格点___を目指す"},
+    {word:"位置",reading:"いち",hint:"地図で___を確認する"},
+    {word:"印刷",reading:"いんさつ",hint:"プリントを___する"},
+    {word:"英語",reading:"えいご",hint:"___の授業がある"},
+    {word:"栄養",reading:"えいよう",hint:"___のバランスを取る"},
+    {word:"塩分",reading:"えんぶん",hint:"___を取りすぎない"},
+    {word:"果物",reading:"くだもの",hint:"新鮮な___を食べる"},
+    {word:"各自",reading:"かくじ",hint:"___で準備する"},
+    {word:"完成",reading:"かんせい",hint:"作品が___した"},
+    {word:"観察",reading:"かんさつ",hint:"植物を___する"},
+    {word:"関係",reading:"かんけい",hint:"深い___がある"},
+    {word:"機械",reading:"きかい",hint:"___を操作する"},
+    {word:"季節",reading:"きせつ",hint:"___の変わり目"},
+    {word:"希望",reading:"きぼう",hint:"将来への___を持つ"},
+    {word:"競争",reading:"きょうそう",hint:"___に勝つ"},
+    {word:"協力",reading:"きょうりょく",hint:"みんなで___する"},
+    {word:"訓練",reading:"くんれん",hint:"毎日___を積む"},
+    {word:"景色",reading:"けしき",hint:"美しい___を眺める"},
+    {word:"健康",reading:"けんこう",hint:"___に気をつける"},
+    {word:"建設",reading:"けんせつ",hint:"ビルを___する"},
+    {word:"結果",reading:"けっか",hint:"テストの___が出た"},
+    {word:"材料",reading:"ざいりょう",hint:"料理の___を買う"},
+    {word:"残念",reading:"ざんねん",hint:"___な結果に終わった"},
+    {word:"試合",reading:"しあい",hint:"明日___がある"},
+    {word:"失敗",reading:"しっぱい",hint:"___から学ぶ"},
+    {word:"種類",reading:"しゅるい",hint:"様々な___がある"},
+    {word:"順番",reading:"じゅんばん",hint:"___を守る"},
+    {word:"信頼",reading:"しんらい",hint:"___できる友人"},
+    {word:"節約",reading:"せつやく",hint:"電気を___する"},
+    {word:"選手",reading:"せんしゅ",hint:"野球の___になりたい"},
+    {word:"達成",reading:"たっせい",hint:"目標を___する"},
+    {word:"努力",reading:"どりょく",hint:"___を惜しまない"},
+    {word:"特別",reading:"とくべつ",hint:"___な日だ"},
+    {word:"熱心",reading:"ねっしん",hint:"___に勉強する"},
+    {word:"必要",reading:"ひつよう",hint:"___な物を準備する"},
+    {word:"変化",reading:"へんか",hint:"季節の___を感じる"},
+    {word:"便利",reading:"べんり",hint:"___な道具"},
+    {word:"養う",reading:"やしなう",hint:"体力を___"},
+    {word:"利用",reading:"りよう",hint:"バスを___する"},
+    {word:"初めて",reading:"はじめて",hint:"___スキーをした"},
+    {word:"続ける",reading:"つづける",hint:"練習を___"},
+    {word:"望む",reading:"のぞむ",hint:"平和を___"},
+    {word:"固める",reading:"かためる",hint:"決意を___"},
+    {word:"功績",reading:"こうせき",hint:"大きな___を残す"},
+    {word:"司会",reading:"しかい",hint:"式の___を務める"},
+    {word:"周辺",reading:"しゅうへん",hint:"学校の___を歩く"},
+    {word:"法律",reading:"ほうりつ",hint:"___を守る"},
+    {word:"老人",reading:"ろうじん",hint:"___に席を譲る"},
+    {word:"労働",reading:"ろうどう",hint:"___の大切さを学ぶ"},
+  ],
+  5: [
+    {word:"圧力",reading:"あつりょく",hint:"強い___がかかる"},
+    {word:"移動",reading:"いどう",hint:"___手段を選ぶ"},
+    {word:"営業",reading:"えいぎょう",hint:"___時間内に電話する"},
+    {word:"応援",reading:"おうえん",hint:"友達を___する"},
+    {word:"仮定",reading:"かてい",hint:"___の話をする"},
+    {word:"価値",reading:"かち",hint:"___のあるものを大切に"},
+    {word:"過去",reading:"かこ",hint:"___を振り返る"},
+    {word:"解決",reading:"かいけつ",hint:"問題を___する"},
+    {word:"確実",reading:"かくじつ",hint:"___に仕事をこなす"},
+    {word:"慣習",reading:"かんしゅう",hint:"古い___を守る"},
+    {word:"基本",reading:"きほん",hint:"___を大切にする"},
+    {word:"規則",reading:"きそく",hint:"___を守る"},
+    {word:"技術",reading:"ぎじゅつ",hint:"___を磨く"},
+    {word:"逆転",reading:"ぎゃくてん",hint:"試合が___した"},
+    {word:"救助",reading:"きゅうじょ",hint:"遭難者を___する"},
+    {word:"許可",reading:"きょか",hint:"___を得る"},
+    {word:"均等",reading:"きんとう",hint:"___に分ける"},
+    {word:"経験",reading:"けいけん",hint:"貴重な___をした"},
+    {word:"減少",reading:"げんしょう",hint:"人口が___している"},
+    {word:"個人",reading:"こじん",hint:"___の意見を尊重する"},
+    {word:"効果",reading:"こうか",hint:"薬の___が出てきた"},
+    {word:"構造",reading:"こうぞう",hint:"建物の___を調べる"},
+    {word:"混雑",reading:"こんざつ",hint:"電車が___している"},
+    {word:"再生",reading:"さいせい",hint:"録音を___する"},
+    {word:"財産",reading:"ざいさん",hint:"家族の___を守る"},
+    {word:"支持",reading:"しじ",hint:"多くの人に___される"},
+    {word:"資料",reading:"しりょう",hint:"___を集める"},
+    {word:"質問",reading:"しつもん",hint:"先生に___する"},
+    {word:"修理",reading:"しゅうり",hint:"自転車を___する"},
+    {word:"準備",reading:"じゅんび",hint:"試合の___をする"},
+    {word:"招待",reading:"しょうたい",hint:"パーティーに___する"},
+    {word:"証明",reading:"しょうめい",hint:"身分を___する"},
+    {word:"状況",reading:"じょうきょう",hint:"___を把握する"},
+    {word:"情報",reading:"じょうほう",hint:"___を集める"},
+    {word:"製造",reading:"せいぞう",hint:"工場で___する"},
+    {word:"税金",reading:"ぜいきん",hint:"___を納める"},
+    {word:"設備",reading:"せつび",hint:"最新の___を整える"},
+    {word:"増加",reading:"ぞうか",hint:"人口が___している"},
+    {word:"測定",reading:"そくてい",hint:"温度を___する"},
+    {word:"態度",reading:"たいど",hint:"真剣な___で臨む"},
+    {word:"貯金",reading:"ちょきん",hint:"毎月___する"},
+    {word:"統計",reading:"とうけい",hint:"___データを見る"},
+    {word:"独立",reading:"どくりつ",hint:"___心を持つ"},
+    {word:"任務",reading:"にんむ",hint:"重要な___を果たす"},
+    {word:"能力",reading:"のうりょく",hint:"___を発揮する"},
+    {word:"判断",reading:"はんだん",hint:"正しい___をする"},
+    {word:"比較",reading:"ひかく",hint:"二つを___する"},
+    {word:"復習",reading:"ふくしゅう",hint:"毎日___する"},
+    {word:"防止",reading:"ぼうし",hint:"事故を___する"},
+    {word:"余裕",reading:"よゆう",hint:"時間に___がある"},
+  ],
+  6: [
+    {word:"異常",reading:"いじょう",hint:"___な天気が続いている"},
+    {word:"遺産",reading:"いさん",hint:"世界___に登録された"},
+    {word:"宇宙",reading:"うちゅう",hint:"___飛行士になりたい"},
+    {word:"映画",reading:"えいが",hint:"___を見に行った"},
+    {word:"延長",reading:"えんちょう",hint:"試合が___された"},
+    {word:"我慢",reading:"がまん",hint:"痛みを___した"},
+    {word:"拡大",reading:"かくだい",hint:"地図を___して見た"},
+    {word:"内閣",reading:"ないかく",hint:"___総理大臣"},
+    {word:"簡単",reading:"かんたん",hint:"___な問題だ"},
+    {word:"危険",reading:"きけん",hint:"___な場所に近づかない"},
+    {word:"発揮",reading:"はっき",hint:"実力を___する"},
+    {word:"貴重",reading:"きちょう",hint:"___な体験をした"},
+    {word:"疑問",reading:"ぎもん",hint:"___に思うことがある"},
+    {word:"吸収",reading:"きゅうしゅう",hint:"水分を___する"},
+    {word:"故郷",reading:"こきょう",hint:"___に帰りたい"},
+    {word:"尊敬",reading:"そんけい",hint:"先生を___する"},
+    {word:"警察",reading:"けいさつ",hint:"___に届ける"},
+    {word:"激しい",reading:"はげしい",hint:"___雨が降った"},
+    {word:"権利",reading:"けんり",hint:"人間の___を守る"},
+    {word:"憲法",reading:"けんぽう",hint:"日本国___を学ぶ"},
+    {word:"資源",reading:"しげん",hint:"天然___を大切にする"},
+    {word:"厳しい",reading:"きびしい",hint:"___訓練に耐えた"},
+    {word:"呼吸",reading:"こきゅう",hint:"深く___する"},
+    {word:"誤解",reading:"ごかい",hint:"___を解く"},
+    {word:"紅葉",reading:"こうよう",hint:"秋の___が美しい"},
+    {word:"困難",reading:"こんなん",hint:"___を乗り越える"},
+    {word:"経済",reading:"けいざい",hint:"___が発展する"},
+    {word:"裁判",reading:"さいばん",hint:"___所で争う"},
+    {word:"磁石",reading:"じしゃく",hint:"___が鉄を引き付ける"},
+    {word:"捨てる",reading:"すてる",hint:"ごみを___"},
+    {word:"若者",reading:"わかもの",hint:"元気な___たち"},
+    {word:"収入",reading:"しゅうにゅう",hint:"___が増えた"},
+    {word:"就職",reading:"しゅうしょく",hint:"___活動をする"},
+    {word:"処理",reading:"しょり",hint:"データを___する"},
+    {word:"将来",reading:"しょうらい",hint:"___の夢を語る"},
+    {word:"心臓",reading:"しんぞう",hint:"___が速く鼓動する"},
+    {word:"存在",reading:"そんざい",hint:"確かに___している"},
+    {word:"探検",reading:"たんけん",hint:"森の中を___する"},
+    {word:"誕生",reading:"たんじょう",hint:"___日おめでとう"},
+    {word:"価値",reading:"かち",hint:"___のあるものを大切に"},
+    {word:"忠実",reading:"ちゅうじつ",hint:"命令に___に従う"},
+    {word:"著者",reading:"ちょしゃ",hint:"この本の___は誰だ"},
+    {word:"頂上",reading:"ちょうじょう",hint:"山の___に立つ"},
+    {word:"発展",reading:"はってん",hint:"技術が___する"},
+    {word:"確認",reading:"かくにん",hint:"内容を___する"},
+    {word:"納得",reading:"なっとく",hint:"説明に___した"},
+    {word:"批判",reading:"ひはん",hint:"政策を___する"},
+    {word:"秘密",reading:"ひみつ",hint:"___を守る"},
+    {word:"訪問",reading:"ほうもん",hint:"友人の家を___する"},
+    {word:"論文",reading:"ろんぶん",hint:"___を書く"},
+  ]
+};
+
+// --- 算数データ（q:問題, a:正解, w:不正解3つ, cat:カテゴリ）---
+const mathData = {
+  4: [
+    // 大きな数
+    {q:"1億は何万か",a:"10000万",w:["1000万","100万","100000万"],cat:"大きな数"},
+    {q:"3億5000万を数字で書くと",a:"350000000",w:["35000000","3050000000","3500000000"],cat:"大きな数"},
+    {q:"十の位が4、百の位が2、千の位が7の数は",a:"7240",w:["7420","2740","4720"],cat:"大きな数"},
+    // 角の大きさ
+    {q:"直角は何度か",a:"90度",w:["45度","60度","180度"],cat:"角の大きさ"},
+    {q:"一直線は何度か",a:"180度",w:["90度","360度","270度"],cat:"角の大きさ"},
+    {q:"三角形の内角の和は",a:"180度",w:["360度","90度","270度"],cat:"角の大きさ"},
+    {q:"四角形の内角の和は",a:"360度",w:["180度","270度","540度"],cat:"角の大きさ"},
+    // 面積
+    {q:"縦6cm・横8cmの長方形の面積は",a:"48cm²",w:["28cm²","14cm²","96cm²"],cat:"面積"},
+    {q:"1辺7cmの正方形の面積は",a:"49cm²",w:["28cm²","14cm²","42cm²"],cat:"面積"},
+    {q:"縦5cm・横12cmの長方形の面積は",a:"60cm²",w:["34cm²","17cm²","120cm²"],cat:"面積"},
+    {q:"1辺9cmの正方形の面積は",a:"81cm²",w:["36cm²","18cm²","72cm²"],cat:"面積"},
+    // 小数の計算
+    {q:"1.5 × 4 =",a:"6",w:["5.5","4.5","7"],cat:"小数の計算"},
+    {q:"3.6 ÷ 4 =",a:"0.9",w:["0.8","1.2","9"],cat:"小数の計算"},
+    {q:"2.8 + 1.5 =",a:"4.3",w:["3.3","4.13","4.23"],cat:"小数の計算"},
+    {q:"5.0 - 2.3 =",a:"2.7",w:["3.3","2.3","2.77"],cat:"小数の計算"},
+    {q:"0.5 × 6 =",a:"3",w:["0.3","3.5","6.5"],cat:"小数の計算"},
+    {q:"4.8 ÷ 6 =",a:"0.8",w:["0.7","1.2","8"],cat:"小数の計算"},
+    // 分数の基礎
+    {q:"1/4 + 2/4 =",a:"3/4",w:["3/8","2/8","1/2"],cat:"分数"},
+    {q:"5/8 - 2/8 =",a:"3/8",w:["3/16","7/8","1/4"],cat:"分数"},
+    {q:"3/8 + 3/8 =",a:"3/4",w:["6/16","1/2","1"],cat:"分数"},
+    {q:"1 - 2/5 =",a:"3/5",w:["1/5","2/5","4/5"],cat:"分数"},
+    {q:"1/2 = □/6　□は",a:"3",w:["2","4","6"],cat:"分数"},
+    // 時間
+    {q:"2時間30分は何分か",a:"150分",w:["230分","120分","132分"],cat:"時間の計算"},
+    {q:"185分は何時間何分か",a:"3時間5分",w:["2時間55分","1時間85分","3時間25分"],cat:"時間の計算"},
+    // 図形
+    {q:"3つの辺が等しい三角形は",a:"正三角形",w:["二等辺三角形","直角三角形","不等辺三角形"],cat:"図形"},
+    {q:"2辺が等しい三角形は",a:"二等辺三角形",w:["正三角形","直角三角形","不等辺三角形"],cat:"図形"},
+    {q:"四角形のうち4辺と4角が等しい図形は",a:"正方形",w:["長方形","ひし形","台形"],cat:"図形"},
+    // 単位
+    {q:"1km = 何m",a:"1000m",w:["100m","10000m","100000m"],cat:"単位"},
+    {q:"1kg = 何g",a:"1000g",w:["100g","10000g","500g"],cat:"単位"},
+    {q:"1L = 何dL",a:"10dL",w:["1dL","100dL","1000dL"],cat:"単位"},
+  ],
+  5: [
+    // 倍数・約数
+    {q:"4と6の最小公倍数は",a:"12",w:["24","6","8"],cat:"倍数・約数"},
+    {q:"12と18の最大公約数は",a:"6",w:["3","12","36"],cat:"倍数・約数"},
+    {q:"8の倍数で3番目に小さいものは",a:"24",w:["8","16","32"],cat:"倍数・約数"},
+    {q:"15の約数の個数は",a:"4個",w:["3個","5個","6個"],cat:"倍数・約数"},
+    {q:"素数はどれか",a:"7",w:["4","6","9"],cat:"倍数・約数"},
+    // 小数の計算
+    {q:"2.4 × 1.5 =",a:"3.6",w:["3.4","4.0","2.4"],cat:"小数の計算"},
+    {q:"5.6 ÷ 1.4 =",a:"4",w:["3","5","40"],cat:"小数の計算"},
+    {q:"0.8 × 3.5 =",a:"2.8",w:["2.4","3.0","3.6"],cat:"小数の計算"},
+    {q:"7.2 ÷ 0.9 =",a:"8",w:["6","9","72"],cat:"小数の計算"},
+    // 分数のたし算・ひき算
+    {q:"1/2 + 1/3 =",a:"5/6",w:["2/5","2/6","1/6"],cat:"分数の計算"},
+    {q:"3/4 - 1/3 =",a:"5/12",w:["2/12","1/2","2/7"],cat:"分数の計算"},
+    {q:"2/3 + 3/4 =",a:"17/12",w:["5/7","5/12","12/17"],cat:"分数の計算"},
+    {q:"5/6 - 1/4 =",a:"7/12",w:["4/12","1/2","2/3"],cat:"分数の計算"},
+    // 割合・百分率
+    {q:"200の40%は",a:"80",w:["40","160","120"],cat:"割合"},
+    {q:"80は200の何%か",a:"40%",w:["20%","80%","60%"],cat:"割合"},
+    {q:"1割5分は何%か",a:"15%",w:["5%","150%","1.5%"],cat:"割合"},
+    {q:"定価1000円の20%引きは",a:"800円",w:["200円","1200円","900円"],cat:"割合"},
+    // 平均
+    {q:"5, 7, 3, 9, 6 の平均は",a:"6",w:["5","7","30"],cat:"平均"},
+    {q:"平均8で4つのデータの合計は",a:"32",w:["2","12","24"],cat:"平均"},
+    // 面積
+    {q:"底辺8cm・高さ5cmの三角形の面積は",a:"20cm²",w:["40cm²","13cm²","10cm²"],cat:"面積"},
+    {q:"底辺10cm・高さ6cmの平行四辺形の面積は",a:"60cm²",w:["30cm²","16cm²","120cm²"],cat:"面積"},
+    {q:"上底4cm・下底8cm・高さ3cmの台形の面積は",a:"18cm²",w:["24cm²","36cm²","12cm²"],cat:"面積"},
+    // 体積
+    {q:"縦3・横4・高さ5cmの直方体の体積は",a:"60cm³",w:["24cm³","47cm³","120cm³"],cat:"体積"},
+    {q:"1辺4cmの立方体の体積は",a:"64cm³",w:["48cm³","16cm³","32cm³"],cat:"体積"},
+    // 速さ
+    {q:"時速40kmで2時間走った距離は",a:"80km",w:["20km","42km","160km"],cat:"速さ"},
+    {q:"6kmを2時間で歩いた速さは",a:"時速3km",w:["時速12km","時速4km","時速8km"],cat:"速さ"},
+    // 単位量
+    {q:"6㎡に12人いるとき1㎡あたり何人か",a:"2人",w:["6人","3人","18人"],cat:"単位量"},
+    {q:"30km走るのにガソリン2L使う燃費は",a:"15km/L",w:["60km/L","30km/L","6km/L"],cat:"単位量"},
+    // 比例
+    {q:"y=2x で x=5 のとき y=",a:"10",w:["7","2.5","25"],cat:"比例"},
+    {q:"比例のグラフの形は",a:"原点を通る直線",w:["曲線","y軸に平行","原点を通らない直線"],cat:"比例"},
+  ],
+  6: [
+    // 分数のかけ算
+    {q:"2/3 × 3/4 =",a:"1/2",w:["5/7","5/12","6/7"],cat:"分数のかけ算"},
+    {q:"3/4 × 8/9 =",a:"2/3",w:["11/13","1/3","11/36"],cat:"分数のかけ算"},
+    {q:"5/6 × 3/5 =",a:"1/2",w:["8/11","2/3","15/11"],cat:"分数のかけ算"},
+    // 分数のわり算
+    {q:"1/2 ÷ 1/4 =",a:"2",w:["1/8","4","1/2"],cat:"分数のわり算"},
+    {q:"2/3 ÷ 4/5 =",a:"5/6",w:["8/15","10/12","2/3"],cat:"分数のわり算"},
+    {q:"4/5 ÷ 2/3 =",a:"6/5",w:["8/15","5/6","2/3"],cat:"分数のわり算"},
+    {q:"3/7 ÷ 9/14 =",a:"2/3",w:["27/98","1/3","3/2"],cat:"分数のわり算"},
+    // 比
+    {q:"6:9 を最も簡単な整数の比に",a:"2:3",w:["3:2","6:9","1:2"],cat:"比"},
+    {q:"1/3 : 1/4 を整数の比に",a:"4:3",w:["3:4","1:1","2:3"],cat:"比"},
+    {q:"A:B=3:5でA=9のときBは",a:"15",w:["5","12","27"],cat:"比"},
+    {q:"比 2:5 で全体が28のとき2の部分は",a:"8",w:["10","14","6"],cat:"比"},
+    // 速さ
+    {q:"時速60kmで3時間走った距離は",a:"180km",w:["20km","63km","57km"],cat:"速さ"},
+    {q:"秒速5mは時速何kmか",a:"18km",w:["5km","30km","50km"],cat:"速さ"},
+    {q:"時速72kmは秒速何mか",a:"20m",w:["72m","12m","2m"],cat:"速さ"},
+    // 面積・体積
+    {q:"半径5cmの円の面積（π=3.14）",a:"78.5cm²",w:["31.4cm²","15.7cm²","157cm²"],cat:"面積・体積"},
+    {q:"対角線6cmと8cmのひし形の面積",a:"24cm²",w:["48cm²","12cm²","96cm²"],cat:"面積・体積"},
+    {q:"半径3cm・高さ10cmの円柱の体積（π=3.14）",a:"282.6cm³",w:["94.2cm³","141.3cm³","565.2cm³"],cat:"面積・体積"},
+    {q:"上底4cm・下底8cm・高さ5cmの台形の面積",a:"30cm²",w:["40cm²","20cm²","60cm²"],cat:"面積・体積"},
+    // 比例・反比例
+    {q:"yがxに比例しx=3でy=12、x=5のときy=",a:"20",w:["15","25","60"],cat:"比例・反比例"},
+    {q:"yはxに反比例しx=2でy=6、x=3のときy=",a:"4",w:["9","3","18"],cat:"比例・反比例"},
+    {q:"y=12/x でx=4のときy=",a:"3",w:["48","8","16"],cat:"比例・反比例"},
+    // 文字と式
+    {q:"1個x円のりんご5個の代金は",a:"5x円",w:["x+5円","x÷5円","x-5円"],cat:"文字と式"},
+    {q:"a=3のとき 4a+2=",a:"14",w:["9","12","11"],cat:"文字と式"},
+    {q:"□+7=15の□は",a:"8",w:["22","7","105"],cat:"文字と式"},
+    // 場合の数
+    {q:"A・B・Cの3人が1列に並ぶ並び方は何通り",a:"6通り",w:["3通り","9通り","27通り"],cat:"場合の数"},
+    {q:"A・B・C・Dの4人から2人選ぶとき何通り",a:"6通り",w:["12通り","4通り","8通り"],cat:"場合の数"},
+    {q:"コインを3回投げて表が2回出る確率は",a:"3/8",w:["1/2","1/4","2/3"],cat:"場合の数"},
+    {q:"赤玉3個・白玉2個から1個取り出す。赤が出る確率は",a:"3/5",w:["1/2","2/5","1/5"],cat:"場合の数"},
+    {q:"サイコロを1回投げて3以上の目が出る確率は",a:"2/3",w:["1/2","1/3","3/4"],cat:"場合の数"},
+  ]
+};
+
+// --- 理科データ ---
+const scienceData = {
+  5: [
+    {q:"植物の種が発芽するために必要なものでないものは",a:"光",w:["水","空気","適切な温度"],cat:"植物の発芽"},
+    {q:"インゲンマメの種のうち、発芽の養分が入っているのは",a:"子葉",w:["根","茎","葉"],cat:"植物の発芽"},
+    {q:"メダカのオスとメスの違いとして正しいものは",a:"オスの背びれに切れ込みがある",w:["メスの方が大きい","オスの腹が膨らむ","メスの色が派手"],cat:"メダカ"},
+    {q:"川の上流に多い石の特徴は",a:"角ばっている",w:["丸くなっている","小さい","白い"],cat:"流水のはたらき"},
+    {q:"川の流れが速いところに多いのは",a:"侵食作用",w:["堆積作用","蒸発","浸透"],cat:"流水のはたらき"},
+    {q:"食塩を水に溶かすと水溶液は",a:"透明になる",w:["白くにごる","黄色くなる","固まる"],cat:"もののとけ方"},
+    {q:"食塩水から食塩を取り出す方法は",a:"蒸発させる",w:["冷やす","ろ過する","加熱する"],cat:"もののとけ方"},
+    {q:"雲はどこで作られるか",a:"上空で水蒸気が冷えて",w:["海で水が温められて","山から水が蒸発して","川の水が上がって"],cat:"天気の変化"},
+    {q:"台風の進路として多いのは",a:"最初南から北西に進み後に北東へ",w:["常に北へ進む","常に東へ進む","南へ戻る"],cat:"天気の変化"},
+    {q:"振り子が1往復する時間が変わるのは何を変えたときか",a:"振り子の長さ",w:["おもりの重さ","振れ幅","糸の材料"],cat:"振り子"},
+    {q:"電磁石のN極とS極を入れ替えるには",a:"電流の向きを変える",w:["コイルの巻き数を増やす","電圧を上げる","鉄芯を取り除く"],cat:"電流と電磁石"},
+    {q:"電磁石を強くする方法でないものは",a:"鉄芯の重さを増やす",w:["コイルの巻き数を増やす","電流を強くする","鉄芯を入れる"],cat:"電流と電磁石"},
+    {q:"人の体で血液をポンプのように送り出す器官は",a:"心臓",w:["肺","胃","肝臓"],cat:"人の体"},
+    {q:"呼吸で体に取り込まれる気体は",a:"酸素",w:["窒素","二酸化炭素","水蒸気"],cat:"人の体"},
+    {q:"花粉を運ぶ役目をする生き物は",a:"ハチなどの昆虫",w:["ミミズ","クモ","カエル"],cat:"花のつくり"},
+    {q:"受粉後に果実になる部分は",a:"子房",w:["めしべ","おしべ","花びら"],cat:"花のつくり"},
+    {q:"川が平野に出るとき、流れの速さは",a:"遅くなる",w:["速くなる","変わらない","一時止まる"],cat:"流水のはたらき"},
+    {q:"天気予報の雲画像で使う衛星は",a:"気象衛星",w:["通信衛星","放送衛星","偵察衛星"],cat:"天気の変化"},
+    {q:"食塩は水の温度が上がると溶ける量は",a:"ほとんど変わらない",w:["大幅に増える","大幅に減る","溶けなくなる"],cat:"もののとけ方"},
+    {q:"ミョウバンは水を冷やすと",a:"結晶が出てくる",w:["溶けたまま","蒸発する","色が変わる"],cat:"もののとけ方"},
+  ],
+  6: [
+    {q:"ものが燃えるために必要なものは",a:"酸素",w:["窒素","二酸化炭素","水蒸気"],cat:"ものの燃え方"},
+    {q:"ものが燃えた後に増える気体は",a:"二酸化炭素",w:["酸素","窒素","水素"],cat:"ものの燃え方"},
+    {q:"二酸化炭素を石灰水に通すと",a:"白くにごる",w:["透明のまま","青くなる","気泡が出る"],cat:"ものの燃え方"},
+    {q:"でんぷんにヨウ素液をつけると",a:"青紫色になる",w:["赤くなる","黄色になる","変化なし"],cat:"植物の体"},
+    {q:"植物が光を受けて養分を作るはたらきを",a:"光合成",w:["呼吸","蒸散","発酵"],cat:"植物の体"},
+    {q:"植物が葉から水を蒸発させるはたらきを",a:"蒸散",w:["光合成","呼吸","吸収"],cat:"植物の体"},
+    {q:"血液に含まれ酸素を運ぶ成分は",a:"赤血球",w:["白血球","血小板","血漿"],cat:"人の体"},
+    {q:"食べ物を消化する器官の順序として正しいのは",a:"口→食道→胃→小腸→大腸",w:["口→胃→食道→小腸→大腸","口→小腸→胃→大腸→食道","口→食道→小腸→胃→大腸"],cat:"人の体"},
+    {q:"地層をつくる岩石のうち、火山からできたものは",a:"火成岩",w:["堆積岩","変成岩","化石"],cat:"大地のつくり"},
+    {q:"化石から分かることは",a:"大昔の生物の様子",w:["現在の気候","地球の重力","水の硬さ"],cat:"大地のつくり"},
+    {q:"月が自ら光っていないことを示す理由は",a:"太陽の光を反射しているから",w:["地球の影になるから","核融合しないから","温度が低いから"],cat:"月と太陽"},
+    {q:"月の形が変わって見えるのはなぜか",a:"月と太陽の位置関係が変わるから",w:["月が自転するから","地球が自転するから","月が変形するから"],cat:"月と太陽"},
+    {q:"発電機でコイルを速く回すと電流は",a:"大きくなる",w:["小さくなる","変わらない","0になる"],cat:"電気の利用"},
+    {q:"コンデンサーにためた電気の利用例は",a:"乾電池の代わりに豆電球を光らせる",w:["電池を充電する","電気を熱に変える","音を出す"],cat:"電気の利用"},
+    {q:"水よう液を赤色リトマス紙につけると青くなる。この水よう液は",a:"アルカリ性",w:["酸性","中性","塩性"],cat:"水よう液の性質"},
+    {q:"塩酸に鉄を入れると",a:"溶けて水素が出る",w:["溶けて酸素が出る","溶けない","固まる"],cat:"水よう液の性質"},
+    {q:"中和とは何か",a:"酸性とアルカリ性が打ち消し合う反応",w:["物質が燃える反応","電気が流れる現象","水が蒸発すること"],cat:"水よう液の性質"},
+    {q:"てこが水平になるための条件は",a:"左右の（重さ×距離）が等しい",w:["左右の重さが等しい","左右の距離が等しい","支点が端にある"],cat:"てこ"},
+    {q:"てこで力点を支点に近づけると",a:"より大きな力が必要になる",w:["より小さな力でよい","変わらない","動かなくなる"],cat:"てこ"},
+    {q:"生き物どうしの「食う食われる」の関係を",a:"食物連鎖",w:["共生","寄生","競争"],cat:"生き物と環境"},
+  ]
+};
+
+// --- 社会データ（都道府県） ---
+const socialData = {
+  4: [
+    {q:"日本の都道府県の数は",a:"47",w:["46","48","50"],cat:"都道府県"},
+    {q:"北海道の県庁所在地は",a:"札幌市",w:["函館市","旭川市","釧路市"],cat:"都道府県"},
+    {q:"東京都の隣にない都県は",a:"静岡県",w:["神奈川県","埼玉県","千葉県"],cat:"都道府県"},
+    {q:"日本で一番大きい都道府県は",a:"北海道",w:["岩手県","長野県","福島県"],cat:"都道府県"},
+    {q:"日本で一番小さい都道府県は",a:"香川県",w:["大阪府","東京都","沖縄県"],cat:"都道府県"},
+    {q:"琵琶湖がある都道府県は",a:"滋賀県",w:["奈良県","三重県","京都府"],cat:"都道府県"},
+    {q:"富士山がある都道府県は（山頂部）",a:"静岡県と山梨県",w:["神奈川県と東京都","長野県と静岡県","山梨県と長野県"],cat:"都道府県"},
+    {q:"沖縄県の県庁所在地は",a:"那覇市",w:["石垣市","宮古島市","名護市"],cat:"都道府県"},
+    {q:"九州地方に含まれない県は",a:"山口県",w:["鹿児島県","宮崎県","大分県"],cat:"都道府県"},
+    {q:"関東地方に含まれる都県の数は",a:"1都6県",w:["1都5県","2都5県","1都7県"],cat:"都道府県"},
+    {q:"信州・長野県の県庁所在地は",a:"長野市",w:["松本市","上田市","飯田市"],cat:"都道府県"},
+    {q:"愛知県の県庁所在地は",a:"名古屋市",w:["豊橋市","岡崎市","豊田市"],cat:"都道府県"},
+    {q:"広島県の県庁所在地は",a:"広島市",w:["福山市","呉市","尾道市"],cat:"都道府県"},
+    {q:"四国地方の県の数は",a:"4県",w:["3県","5県","6県"],cat:"都道府県"},
+    {q:"本州・四国・九州・北海道に加えてもう一つ「五島列島」の読み方は",a:"ごとう",w:["いつしま","ごしま","ふじしま"],cat:"都道府県"},
+    {q:"新潟県の県庁所在地は",a:"新潟市",w:["長岡市","上越市","三条市"],cat:"都道府県"},
+    {q:"地図の上は何方向か",a:"北",w:["南","東","西"],cat:"地図の見方"},
+    {q:"地図記号で○の中に点があるのは",a:"市役所",w:["学校","消防署","警察署"],cat:"地図の見方"},
+    {q:"地図記号でXのようなマークは",a:"警察署",w:["消防署","病院","市役所"],cat:"地図の見方"},
+    {q:"地図の縮尺が25000分の1のとき地図上の1cmは実際に何mか",a:"250m",w:["25m","2500m","25000m"],cat:"地図の見方"},
+  ],
+  5: [],
+  6: []
+};
+
+// ================================================================
+// ===== 類似漢字マップ（書きテスト用）=====
+// ================================================================
+const visualSimilar = {
+  "異":["具","真","直"],"遺":["遣","遊","選"],"映":["栄","英","鏡"],
+  "延":["廷","建","誕"],"拡":["括","控","担"],"革":["勒","靴","勧"],
+  "閣":["閑","関","間"],"割":["劃","制","刻"],"簡":["間","閑","閣"],
+  "揮":["輝","暉","旗"],"貴":["費","遺","貢"],"疑":["擬","凝","疑"],
+  "郷":["響","卿","鄉"],"勤":["勧","動","勢"],"系":["糸","係","紀"],
+  "敬":["警","境","鏡"],"警":["敬","鏡","境"],"劇":["激","撃","劃"],
+  "激":["劇","撃","潔"],"絹":["綿","網","綱"],"権":["欄","棟","横"],
+  "憲":["懸","慧","憩"],"源":["原","願","緩"],"厳":["巌","岩","誠"],
+  "誤":["語","話","誌"],"語":["誤","話","誌"],"皇":["星","里","量"],
+  "鋼":["剛","綱","鍋"],"刻":["割","劃","剥"],"困":["因","囚","囲"],
+  "裁":["載","戴","栽"],"磁":["慈","滋","磁"],"射":["謝","斜","斷"],
+  "捨":["拾","措","擦"],"拾":["捨","拾","措"],"若":["苦","着","茶"],
+  "就":["蹴","截","就"],"衆":["象","像","衆"],"従":["縦","従","緩"],
+  "縦":["従","横","縦"],"熟":["塾","孰","熱"],"純":["鈍","頓","鈴"],
+  "諸":["者","著","都"],"除":["徐","余","赦"],"将":["奨","帥","牀"],
+  "傷":["腸","陽","揚"],"腸":["傷","陽","揚"],"障":["章","彰","障"],
+  "蒸":["燕","烝","薫"],"垂":["睡","唾","垂"],"推":["惟","准","堆"],
+  "誠":["成","城","盛"],"善":["義","羊","美"],"奏":["泰","奉","奔"],
+  "創":["倉","蒼","槍"],"操":["燥","澡","嫂"],"蔵":["臓","藏","蔵"],
+  "臓":["蔵","腸","臓"],"尊":["遵","導","樽"],"担":["但","坦","拒"],
+  "誕":["延","廷","涎"],"暖":["緩","援","煖"],"忠":["患","忠","恕"],
+  "著":["者","諸","箸"],"潮":["朝","澗","湖"],"賃":["貸","貢","賦"],
+  "糖":["唐","塘","糖"],"認":["訪","誌","詔"],"訪":["認","誌","討"],
+  "脳":["悩","悦","脳"],"悩":["脳","悦","悶"],"俳":["排","徘","俵"],
+  "秘":["泌","密","泌"],"密":["蜜","密","泌"],"腹":["服","腿","腸"],
+  "奮":["震","憤","奮"],"閉":["開","関","閣"],"補":["浦","輔","捕"],
+  "暮":["墓","幕","慕"],"墓":["暮","幕","慕"],"幕":["暮","墓","慕"],
+  "盟":["明","盲","盟"],"模":["摸","楳","横"],"訳":["沢","択","訳"],
+  "優":["憂","悠","優"],"欲":["浴","谷","欲"],"乱":["乳","乙","孔"],
+  "乳":["乱","乙","孔"],"覧":["監","臨","鑑"],"臨":["監","覧","臨"],
+  "朗":["郎","廊","朗"],"論":["倫","輪","諭"],
+  // 4・5年生漢字の追加
+  "健":["建","腱","鍵"],"結":["締","絡","約"],"景":["影","憬","鏡"],
+  "訓":["訊","詠","話"],"節":["切","折","絶"],"続":["読","績","結"],
+  "信":["伸","申","仲"],"成":["誠","城","盛"],"静":["靖","浄","情"],
+  "選":["遺","遣","遊"],"戦":["戮","截","戯"],"然":["燃","熱","焼"],
+  "積":["責","績","積"],"折":["析","拆","折"],"説":["語","話","訓"],
+  "争":["静","浄","情"],"倉":["創","蒼","槍"],"束":["柬","栗","来"],
+  "卒":["率","律","卒"],"孫":["係","孫","系"],"帯":["滞","帶","縛"],
+  "達":["道","遣","達"],"単":["嘆","炭","担"],"置":["值","直","直"],
+    "仲":["仕","信","伸"],"兆":["逃","跳","眺"],"底":["低","抵","砥"],
+  "典":["曲","奥","典"],"伝":["伝","転","電"],"徒":["従","使","徒"],
+  "灯":["燈","灯","灯"],"堂":["塘","棠","常"],"働":["動","勧","動"],
+  "特":["持","待","特"],"熱":["熟","燃","暑"],"念":["今","今","忘"],
+  "敗":["敗","販","版"],"梅":["海","毎","梅"],"飛":["非","排","飛"],
+  "必":["泌","秘","心"],"標":["漂","票","要"],"府":["庫","庁","腐"],
+  "副":["福","腹","幅"],"兵":["丘","并","平"],"別":["刈","列","別"],
+  "辺":["過","辺","込"],"変":["恋","愛","変"],"便":["使","便","更"],
+  "包":["泡","胞","抱"],"法":["泡","波","波"],"望":["朗","郎","冒"],
+  "牧":["救","改","攻"],"末":["本","木","未"],"満":["溢","漲","満"],
+  "未":["末","本","木"],"無":["舞","夢","無"],"約":["絡","結","約"],
+  "勇":["湧","踊","通"],"要":["腰","要","腰"],"養":["羊","美","善"],
+  "浴":["欲","浴","谷"],"利":["到","刷","利"],"陸":["睦","睦","陸"],
+  "良":["食","飼","養"],"料":["材","素","料"],"量":["皇","里","星"],
+  "輪":["論","倫","論"],"令":["命","今","令"],"冷":["令","齢","冷"],
+  "連":["漣","廉","連"],"老":["考","孝","老"],"労":["勤","働","努"],
+};
+
+function getTargetKanji(word) {
+  const kanjiChars = [...word].filter(ch => /[\u4e00-\u9fff]/.test(ch));
+  if (!kanjiChars.length) return null;
+  let best = kanjiChars[0], bestCount = (visualSimilar[best]||[]).length;
+  for (const k of kanjiChars) {
+    const c = (visualSimilar[k]||[]).length;
+    if (c > bestCount) { best=k; bestCount=c; }
+  }
+  return best;
+}
+
+function generateKanjiChoices(q, pool) {
+  const target = getTargetKanji(q.word);
+  const sims = target ? (visualSimilar[target]||[]) : [];
+  const fakes = [];
+  const used = new Set([q.word]);
+  for (const sim of shuffle([...sims])) {
+    if (sim===target) continue;
+    const fake = q.word.replace(target, sim);
+    if (!used.has(fake)) { used.add(fake); fakes.push({word:fake,reading:q.reading,hint:q.hint}); }
+    if (fakes.length>=3) break;
+  }
+  if (fakes.length<3) {
+    const fb = shuffle(pool.filter(v=>!used.has(v.word)));
+    const sl = fb.filter(v=>v.word.length===q.word.length);
+    const src = sl.length>=3-fakes.length ? sl : fb;
+    for (const v of src) {
+      if (fakes.length>=3) break;
+      if (!used.has(v.word)) { fakes.push(v); used.add(v.word); }
+    }
+  }
+  return shuffle([q,...fakes.slice(0,3)]);
+}
+
+function generateMathChoices(q) {
+  return shuffle([{a:q.a,label:q.a}, ...q.w.map(w=>({a:w,label:w}))]);
+}
+
+// ================================================================
+// ===== アプリ状態 =====
+// ================================================================
+let currentGrade = null;
+let currentSubject = null;
+let selectedMode = 'reading';
+let selectedCount = 20;
+let selectedCat = 'all';
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let results = [];
+let currentChoices = [];
+
+// 教科定義
+const SUBJECTS = [
+  {id:'kanji',  name:'漢字', icon:'📖', color:'#3b82f6',
+   available:{4:true,5:true,6:true}},
+  {id:'math',   name:'算数', icon:'🔢', color:'#f59e0b',
+   available:{4:true,5:true,6:true}},
+  {id:'science',name:'理科', icon:'🔬', color:'#10b981',
+   available:{4:false,5:true,6:true}},
+  {id:'social', name:'社会', icon:'🌍', color:'#8b5cf6',
+   available:{4:true,5:false,6:false}},
+  {id:'english',name:'英語', icon:'🔤', color:'#ec4899',
+   available:{4:false,5:false,6:false}},
+  {id:'japanese',name:'国語',icon:'📝', color:'#64748b',
+   available:{4:false,5:false,6:false}},
+];
+
+// ================================================================
+// ===== 画面制御 =====
+// ================================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function shuffle(arr) {
+  const a=[...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function selectGrade(g) {
+  currentGrade = g;
+  document.getElementById('subject-title').textContent = `${g}年生 — 教科を選ぶ`;
+  const grid = document.getElementById('subject-grid');
+  grid.innerHTML = SUBJECTS.map(s => {
+    const avail = s.available[g];
+    return `<button class="subject-btn${avail?'':' disabled'}"
+      ${avail?`onclick="selectSubject('${s.id}')"`:''}>
+      <span class="icon">${s.icon}</span>
+      <span class="label">${s.name}</span>
+      <span class="badge">${avail?'':'準備中'}</span>
+    </button>`;
+  }).join('');
+  showScreen('subject-screen');
+}
+
+function selectSubject(subjectId) {
+  currentSubject = subjectId;
+  const s = SUBJECTS.find(x=>x.id===subjectId);
+  document.getElementById('start-title').textContent =
+    `${currentGrade}年生 ${s.icon} ${s.name}`;
+
+  const opts = document.getElementById('start-options');
+  if (subjectId === 'kanji') {
+    opts.innerHTML = `
+      <div class="section-label">テストの種類</div>
+      <div class="mode-grid">
+        <button class="mode-btn selected" id="mode-reading" onclick="selectMode('reading')">
+          <span class="icon">📖</span>
+          <span class="label">読みテスト</span>
+          <span class="desc">漢字→ひらがな</span>
+        </button>
+        <button class="mode-btn" id="mode-writing" onclick="selectMode('writing')">
+          <span class="icon">✏️</span>
+          <span class="label">書きテスト</span>
+          <span class="desc">ひらがな→漢字選択</span>
+        </button>
+      </div>
+      <div class="section-label">問題数</div>
+      <div class="count-row" id="count-row"></div>`;
+    selectedMode = 'reading';
+  } else {
+    const cats = getCats(subjectId);
+    opts.innerHTML = `
+      <div class="section-label">カテゴリ</div>
+      <div class="cat-row" id="cat-row">
+        <button class="cat-btn selected" onclick="selectCat('all',this)">すべて</button>
+        ${cats.map(c=>`<button class="cat-btn" onclick="selectCat('${c}',this)">${c}</button>`).join('')}
+      </div>
+      <div class="section-label">問題数</div>
+      <div class="count-row" id="count-row"></div>`;
+    selectedCat = 'all';
+  }
+  renderCountBtns();
+  showScreen('start-screen');
+}
+
+function getCats(subjectId) {
+  let data;
+  if (subjectId==='math') data=mathData[currentGrade]||[];
+  else if (subjectId==='science') data=scienceData[currentGrade]||[];
+  else if (subjectId==='social') data=socialData[currentGrade]||[];
+  else return [];
+  return [...new Set(data.map(q=>q.cat))];
+}
+
+function renderCountBtns() {
+  const row = document.getElementById('count-row');
+  if (!row) return;
+  row.innerHTML = [10,20,30,0].map(n=>`
+    <button class="count-btn${selectedCount===n?' selected':''}"
+      onclick="selectCount(${n},this)">${n===0?'全問':n+'問'}</button>`).join('');
+}
+
+function selectMode(mode) {
+  selectedMode = mode;
+  document.getElementById('mode-reading')?.classList.toggle('selected', mode==='reading');
+  document.getElementById('mode-writing')?.classList.toggle('selected', mode==='writing');
+}
+function selectCount(n, btn) {
+  selectedCount = n;
+  document.querySelectorAll('.count-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function selectCat(cat, btn) {
+  selectedCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ================================================================
+// ===== テスト制御 =====
+// ================================================================
+function getPool() {
+  if (currentSubject==='kanji')   return kanjiData[currentGrade]||[];
+  if (currentSubject==='math')    return mathData[currentGrade]||[];
+  if (currentSubject==='science') return scienceData[currentGrade]||[];
+  if (currentSubject==='social')  return socialData[currentGrade]||[];
+  return [];
+}
+
+function startTest() {
+  let pool = getPool();
+  if (currentSubject!=='kanji' && selectedCat!=='all')
+    pool = pool.filter(q=>q.cat===selectedCat);
+  const shuffled = shuffle(pool);
+  const count = selectedCount===0 ? shuffled.length : Math.min(selectedCount, shuffled.length);
+  questions = shuffled.slice(0, count);
+  currentIndex = 0; score = 0; results = [];
+  showScreen('quiz-screen');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentIndex];
+  answered = false; currentChoices = [];
+  document.getElementById('q-counter').textContent = `${currentIndex+1} / ${questions.length}`;
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('progress-fill').style.width = `${currentIndex/questions.length*100}%`;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const s = SUBJECTS.find(x=>x.id===currentSubject);
+  const badgeClass = currentSubject==='kanji'
+    ? (selectedMode==='reading'?'badge-reading':'badge-writing')
+    : currentSubject==='math' ? 'badge-math'
+    : currentSubject==='science' ? 'badge-sci' : 'badge-soc';
+  document.getElementById('q-badge').innerHTML =
+    `<span class="badge ${badgeClass}">${s.icon}${s.name}</span>`;
+
+  const area = document.getElementById('question-area');
+
+  if (currentSubject==='kanji' && selectedMode==='reading') {
+    // 読みテスト：漢字を見てひらがなを入力
+    const hl = q.hint.replace('___',`<span class="hl">${q.word}</span>`);
+    area.innerHTML = `
+      <div class="q-hint">下線の読み方をひらがなで書きなさい</div>
+      <div class="q-text">${hl}</div>
+      <input id="answer-input" class="answer-input" type="text"
+        placeholder="ひらがなで入力" autocomplete="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')checkReading()">
+      <button class="check-btn" onclick="checkReading()">答え合わせ</button>`;
+    setTimeout(()=>document.getElementById('answer-input')?.focus(),50);
+
+  } else if (currentSubject==='kanji' && selectedMode==='writing') {
+    // 書きテスト：読みを見て漢字を4択
+    const pool = kanjiData[currentGrade]||[];
+    currentChoices = generateKanjiChoices(q, pool);
+    const blank = q.hint.replace('___','<span class="hl">（　　）</span>');
+    area.innerHTML = `
+      <div class="q-hint">（　　）に入る漢字を選びなさい</div>
+      <div class="q-text">${blank}</div>
+      <div class="q-sub">読み：${q.reading}</div>
+      <div class="choices">
+        ${currentChoices.map((c,i)=>`<button class="choice-btn" id="ch-${i}" onclick="checkWriting(${i})">${c.word}</button>`).join('')}
+      </div>`;
+
+  } else {
+    // 算数・理科・社会：4択選択
+    currentChoices = generateMathChoices(q);
+    area.innerHTML = `
+      <div class="q-hint">${q.cat || ''}</div>
+      <div class="q-text" style="font-size:1.4rem">${q.q}</div>
+      <div class="choices">
+        ${currentChoices.map((c,i)=>`<button class="choice-btn" id="ch-${i}" onclick="checkChoice(${i})">${c.label}</button>`).join('')}
+      </div>`;
+  }
+}
+
+function checkReading() {
+  if (answered) return;
+  const input = document.getElementById('answer-input');
+  if (!input || !input.value.trim()) return;
+  answered = true;
+  input.disabled = true;
+  const correct = questions[currentIndex].reading;
+  const ok = input.value.trim() === correct;
+  input.classList.add(ok?'correct':'incorrect');
+  showFeedback(ok, correct);
+  results.push({...questions[currentIndex], isCorrect:ok, userAnswer:input.value.trim()});
+}
+
+function checkWriting(i) {
+  if (answered) return;
+  answered = true;
+  const chosen = currentChoices[i].word;
+  const correct = questions[currentIndex].word;
+  const ok = chosen === correct;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  currentChoices.forEach((c,idx)=>{
+    const b=document.getElementById(`ch-${idx}`);
+    if (!b) return;
+    if (c.word===correct) b.classList.add('correct');
+    else if (idx===i && !ok) b.classList.add('incorrect');
+  });
+  showFeedback(ok, correct);
+  results.push({...questions[currentIndex], isCorrect:ok, userAnswer:chosen});
+}
+
+function checkChoice(i) {
+  if (answered) return;
+  answered = true;
+  const chosen = currentChoices[i].a;
+  const correct = questions[currentIndex].a;
+  const ok = chosen === correct;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  currentChoices.forEach((c,idx)=>{
+    const b=document.getElementById(`ch-${idx}`);
+    if (!b) return;
+    if (c.a===correct) b.classList.add('correct');
+    else if (idx===i && !ok) b.classList.add('incorrect');
+  });
+  showFeedback(ok, correct);
+  results.push({...questions[currentIndex], isCorrect:ok, userAnswer:chosen});
+}
+
+function showFeedback(ok, correct) {
+  if (ok) score++;
+  const fb = document.getElementById('feedback');
+  fb.textContent = ok ? '✓ 正解！' : `✗ 不正解。正解は「${correct}」`;
+  fb.className = 'feedback ' + (ok?'correct':'incorrect');
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= questions.length) showResults();
+  else showQuestion();
+}
+
+function showResults() {
+  showScreen('results-screen');
+  const pct = Math.round(score/questions.length*100);
+  document.getElementById('res-score').textContent = `${score} / ${questions.length}`;
+  document.getElementById('res-pct').textContent = `正答率：${pct}%`;
+  const msgs = [[100,'完璧です！満点おめでとう！🎉'],[90,'素晴らしい！あと少しで満点！'],
+    [70,'よくできました！さらに頑張ろう！'],[50,'半分以上正解！復習して次は満点を！'],
+    [0,'もっと練習しましょう！一緒に頑張ろう！']];
+  document.getElementById('res-msg').textContent = (msgs.find(([t])=>pct>=t)||['',''])[1];
+  const wrong = results.filter(r=>!r.isCorrect);
+  const list = document.getElementById('wrong-list');
+  list.innerHTML = wrong.length===0
+    ? '<div class="all-correct">全問正解！🎉</div>'
+    : wrong.map(r=>`
+      <div class="wrong-item">
+        <div>
+          <div class="w-q">${r.word||r.q||'—'}</div>
+          <div class="w-hint">${(r.hint||r.cat||'').replace('___','〔　〕')}</div>
+        </div>
+        <div>
+          <div class="w-ans">正解：${r.reading||r.a}</div>
+          <div class="w-mine">あなた：${r.userAnswer}</div>
+        </div>
+      </div>`).join('');
+}
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+</script>
+</body>
+</html>

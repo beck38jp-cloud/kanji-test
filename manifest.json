@@ -1,8 +1,8 @@
 {
-  "name": "小学6年生 漢字テスト",
-  "short_name": "漢字テスト",
-  "description": "小学6年生で習う191字の漢字テストアプリ",
-  "start_url": "./kanji-test.html",
+  "name": "小学校学習アプリ",
+  "short_name": "学習アプリ",
+  "description": "小学4・5・6年生の漢字・算数・理科・社会テストアプリ",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f0f9ff",
   "theme_color": "#3b82f6",
