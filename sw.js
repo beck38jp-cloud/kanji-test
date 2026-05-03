@@ -1,4 +1,4 @@
-const CACHE = 'gakushu-app-v2';
+const CACHE = 'gakushu-app-v3';
 const FILES = [
   './index.html',
   './manifest.json',
