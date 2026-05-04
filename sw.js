@@ -1,5 +1,4 @@
-const CACHE = 'gakushu-app-v4
-  ';
+﻿const CACHE = 'gakushu-app-v7';
 const FILES = [
   './index.html',
   './manifest.json',
@@ -27,3 +26,9 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );
 });
+
+
+
+
+
+
