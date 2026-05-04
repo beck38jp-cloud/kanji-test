@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -670,7 +670,7 @@ const mathData = {
     {q:"1,2,3の3つの数を使った3桁の整数は何通りか（繰り返しなし）",a:"6通り",w:["3通り","9通り","27通り"],cat:"場合の数",e:"百の位3通り×十の位2通り×一の位1通り＝6通り。3！（3の階乗）＝6です。"},
     {q:"ABCDEの5人から3人選ぶ組み合わせは何通りか",a:"10通り",w:["60通り","5通り","15通り"],cat:"場合の数",e:"₅C₃＝5×4×3÷(3×2×1)＝60÷6＝10通りです。"},
     // 比例・反比例
-    {q:"反比例のグラフの形は",a:"双曲線",w:["直線","放物線","円"],cat:"比例・反比例",e:"反比例y＝a/xのグラフは双曲線（なめらかなS字型の2本の曲線）になります。"},
+    {q:"反比例のグラフの形は",a:"双曲線",w:["直線","放物線","円"],cat:"比例・反比例",e:"反比例y＝a/xのグラフは双曲線（原点をはさんで向かい合う2本の曲線）になります。"},
     {q:"yはxに反比例しx=6でy=4のとき、xyの積は",a:"24",w:["10","2/3","48"],cat:"比例・反比例",e:"反比例はxy＝一定。6×4＝24です。x・yがどんな値でも積は24になります。"},
     // 単位
     {q:"1ha（ヘクタール）は何m²か",a:"10000m²",w:["1000m²","100m²","100000m²"],cat:"単位",e:"1ha＝100m×100m＝10000m²。サッカーグラウンドが約1haです。"},
@@ -725,7 +725,7 @@ const scienceData = {
     {q:"北極星の位置は常に",a:"ほぼ北の空に見える",w:["東の空","南の空","西の空"],cat:"星と月",e:"北極星はほぼ地球の自転軸の延長上にあるため、一晩中ほぼ同じ北の位置に見えます。"},
     {q:"月が満ちて欠けていく周期は約",a:"1ヶ月（30日）",w:["1週間","1年","半年"],cat:"星と月",e:"月は約29.5日で地球を1周するため、新月→上弦→満月→下弦→新月と約1か月で変化します。"},
     {q:"夏の大三角形を作る星「ベガ」があるのは",a:"こと座",w:["わし座","はくちょう座","さそり座"],cat:"星と月",e:"夏の大三角はベガ（こと座）・デネブ（はくちょう座）・アルタイル（わし座）の3つです。"},
-    {q:"冬に南の空に見える赤い星「アンタレス」があるのは",a:"さそり座",w:["オリオン座","しし座","おうし座"],cat:"星と月",e:"アンタレスはさそり座の心臓部にある赤い巨星です。夏の夜、南の空で赤く光ります。"},
+    {q:"夏に南の空に見える赤い星「アンタレス」があるのは",a:"さそり座",w:["オリオン座","しし座","おうし座"],cat:"星と月",e:"アンタレスはさそり座の心臓部にある赤い巨星です。夏の夜、南の空で赤く光ります。"},
     {q:"水が氷になると体積は",a:"大きくなる",w:["小さくなる","変わらない","なくなる"],cat:"ものの体積",e:"水は例外的に凍ると体積が約1.1倍に増えます。だからペットボトルに水を入れて凍らせると膨らみます。"},
     {q:"水を熱すると100℃で",a:"沸騰して水蒸気になる",w:["冷たくなる","固まる","重くなる"],cat:"ものの体積",e:"水は100℃になると沸騰し、液体から気体（水蒸気）に変化します。"},
     {q:"鉄・水・空気を温めたとき体積の変化が最も小さいのは",a:"固体（鉄）",w:["液体（水）","気体（空気）","どれも同じ"],cat:"ものの体積",e:"温めたときの体積変化は気体が最も大きく、次に液体、固体は最も小さいです。"},
@@ -901,7 +901,7 @@ const socialData = {
     {q:"日本の国土の約何割が山地・丘陵地か",a:"約7割",w:["約3割","約5割","約9割"],cat:"国土の地形",e:"日本の国土の約75%が山地・丘陵地で平地は少なく、沿岸部の平野・盆地に人口が集中しています。"},
     {q:"日本最長の川はどれか",a:"信濃川",w:["利根川","石狩川","最上川"],cat:"国土の地形",e:"信濃川（長野・新潟）が全長約367kmで日本最長です。利根川（関東）は流域面積が最大です。"},
     {q:"日本の輸送手段で国内貨物の約半分を担うのは",a:"自動車（トラック）",w:["鉄道","船","航空機"],cat:"運輸・通信",e:"国内貨物輸送の約50%以上を自動車（トラック）が担っています。細かい配送ができる利点があります。"},
-    {q:"「太平洋ベルト」に含まれない工業地帯はどれか",a:"北九州工業地帯（地域）",w:["中京工業地帯","京浜工業地帯","阪神工業地帯"],cat:"工業",e:"太平洋ベルトは東京〜大阪〜北九州を結ぶ帯状の工業地帯ですが、北九州は端に位置しやや外れる扱いです。"},
+    {q:"中京工業地帯で特に盛んな工業はどれか",a:"自動車工業",w:["出版・印刷業","造船業","製紙業"],cat:"工業",e:"中京工業地帯は愛知県を中心に自動車工業が特に盛んです。トヨタ自動車などの工場が集まっています。"},
     {q:"漁業で使う「定置網」とは何か",a:"海の決まった場所に固定した網を設置する漁法",w:["船で引っ張る網","空から投下する網","川に設置する網"],cat:"水産業",e:"定置網は海の決まった場所に網を固定し、回遊してきた魚が自然に入るのを待つ漁法です。"},
   ],
   6: [
@@ -1250,6 +1250,405 @@ const japaneseData = {
 };
 
 // ================================================================
+
+// ================================================================
+// ===== 図・地図・グラフの追加 =====
+// ================================================================
+function addQuestionVisuals() {
+  const set = (items, text, svg) => {
+    const q = items.find(v => v.q === text);
+    if (q && !q.svg) q.svg = svg;
+  };
+
+  const svgs = {
+    lineGraph: `<svg viewBox="0 0 230 145" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="12" x2="38" y2="118" stroke="#475569" stroke-width="1.5"/><line x1="38" y1="118" x2="210" y2="118" stroke="#475569" stroke-width="1.5"/><g stroke="#e2e8f0" stroke-width="1"><line x1="38" y1="92" x2="210" y2="92"/><line x1="38" y1="66" x2="210" y2="66"/><line x1="38" y1="40" x2="210" y2="40"/></g><polyline points="45,96 78,82 111,54 144,45 177,72 205,62" fill="none" stroke="#2563eb" stroke-width="3"/><g fill="#2563eb"><circle cx="45" cy="96" r="4"/><circle cx="78" cy="82" r="4"/><circle cx="111" cy="54" r="4"/><circle cx="144" cy="45" r="4"/><circle cx="177" cy="72" r="4"/><circle cx="205" cy="62" r="4"/></g><text x="120" y="138" font-size="12" fill="#64748b" text-anchor="middle" font-family="sans-serif">時間による変化</text></svg>`,
+    barGraph: `<svg viewBox="0 0 230 145" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="12" x2="38" y2="118" stroke="#475569" stroke-width="1.5"/><line x1="38" y1="118" x2="210" y2="118" stroke="#475569" stroke-width="1.5"/><rect x="56" y="56" width="25" height="62" fill="#bfdbfe" stroke="#2563eb"/><rect x="96" y="34" width="25" height="84" fill="#bfdbfe" stroke="#2563eb"/><rect x="136" y="76" width="25" height="42" fill="#bfdbfe" stroke="#2563eb"/><rect x="176" y="48" width="25" height="70" fill="#bfdbfe" stroke="#2563eb"/><text x="130" y="138" font-size="12" fill="#64748b" text-anchor="middle" font-family="sans-serif">種類ごとの人数</text></svg>`,
+    bandGraph: `<svg viewBox="0 0 230 90" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="190" height="28" fill="#f8fafc" stroke="#475569"/><rect x="20" y="25" width="76" height="28" fill="#93c5fd"/><rect x="96" y="25" width="57" height="28" fill="#86efac"/><rect x="153" y="25" width="38" height="28" fill="#fde68a"/><rect x="191" y="25" width="19" height="28" fill="#fca5a5"/><g font-size="11" fill="#334155" font-family="sans-serif"><text x="55" y="44" text-anchor="middle">40%</text><text x="124" y="44" text-anchor="middle">30%</text><text x="172" y="44" text-anchor="middle">20%</text><text x="200" y="44" text-anchor="middle">10%</text></g><text x="115" y="74" font-size="12" fill="#64748b" text-anchor="middle" font-family="sans-serif">全体は同じ長さ</text></svg>`,
+    pieGraph: `<svg viewBox="0 0 190 150" xmlns="http://www.w3.org/2000/svg"><circle cx="82" cy="72" r="55" fill="#fef3c7" stroke="#475569" stroke-width="1.5"/><path d="M82 72 L82 17 A55 55 0 0 1 132 95 Z" fill="#60a5fa" stroke="#475569"/><path d="M82 72 L132 95 A55 55 0 0 1 44 113 Z" fill="#86efac" stroke="#475569"/><path d="M82 72 L44 113 A55 55 0 0 1 82 17 Z" fill="#fde68a" stroke="#475569"/><text x="137" y="54" font-size="12" fill="#1e3a8a" font-family="sans-serif">広い部分</text></svg>`,
+    inverseGraph: `<svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg"><g stroke="#e2e8f0" stroke-width="1"><line x1="25" y1="80" x2="200" y2="80"/><line x1="110" y1="15" x2="110" y2="145"/><line x1="65" y1="15" x2="65" y2="145"/><line x1="155" y1="15" x2="155" y2="145"/><line x1="25" y1="40" x2="200" y2="40"/><line x1="25" y1="120" x2="200" y2="120"/></g><line x1="25" y1="80" x2="200" y2="80" stroke="#475569" stroke-width="1.5"/><line x1="110" y1="15" x2="110" y2="145" stroke="#475569" stroke-width="1.5"/><path d="M122 28 C136 38 153 52 190 67" fill="none" stroke="#2563eb" stroke-width="3"/><path d="M98 132 C84 122 67 108 30 93" fill="none" stroke="#2563eb" stroke-width="3"/><text x="198" y="76" font-size="12" fill="#475569" font-family="sans-serif">x</text><text x="114" y="24" font-size="12" fill="#475569" font-family="sans-serif">y</text></svg>`,
+    triangleAngles: `<svg viewBox="0 0 210 145" xmlns="http://www.w3.org/2000/svg"><polygon points="30,120 180,120 96,25" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><path d="M44 120 A22 22 0 0 1 58 102" fill="none" stroke="#ef4444" stroke-width="2"/><path d="M166 120 A24 24 0 0 0 150 101" fill="none" stroke="#ef4444" stroke-width="2"/><path d="M86 37 A20 20 0 0 0 107 38" fill="none" stroke="#ef4444" stroke-width="2"/><text x="105" y="138" font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif">3つの角の和</text></svg>`,
+    compass: `<svg viewBox="0 0 170 150" xmlns="http://www.w3.org/2000/svg"><rect x="28" y="15" width="115" height="115" rx="8" fill="#f8fafc" stroke="#94a3b8"/><path d="M85 30 L98 83 L85 72 L72 83 Z" fill="#ef4444" stroke="#991b1b"/><path d="M85 120 L72 67 L85 78 L98 67 Z" fill="#bfdbfe" stroke="#2563eb"/><text x="85" y="27" font-size="16" font-weight="700" fill="#ef4444" text-anchor="middle" font-family="sans-serif">北</text><text x="85" y="144" font-size="12" fill="#64748b" text-anchor="middle" font-family="sans-serif">地図の上</text></svg>`,
+    scaleMap: `<svg viewBox="0 0 230 125" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="14" width="190" height="82" rx="8" fill="#ecfeff" stroke="#0e7490"/><path d="M35 75 C67 38 95 85 128 45 S177 80 198 35" fill="none" stroke="#0ea5e9" stroke-width="4"/><line x1="55" y1="105" x2="155" y2="105" stroke="#111827" stroke-width="4"/><line x1="55" y1="99" x2="55" y2="111" stroke="#111827" stroke-width="2"/><line x1="155" y1="99" x2="155" y2="111" stroke="#111827" stroke-width="2"/><text x="105" y="121" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">地図上の長さ</text></svg>`,
+    cityHallSymbol: `<svg viewBox="0 0 170 120" xmlns="http://www.w3.org/2000/svg"><circle cx="85" cy="56" r="38" fill="#f8fafc" stroke="#334155" stroke-width="3"/><circle cx="85" cy="56" r="6" fill="#334155"/><text x="85" y="108" font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif">市役所の記号</text></svg>`,
+    policeSymbol: `<svg viewBox="0 0 170 120" xmlns="http://www.w3.org/2000/svg"><line x1="58" y1="25" x2="112" y2="79" stroke="#334155" stroke-width="12" stroke-linecap="round"/><line x1="112" y1="25" x2="58" y2="79" stroke="#334155" stroke-width="12" stroke-linecap="round"/><line x1="58" y1="25" x2="112" y2="79" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/><line x1="112" y1="25" x2="58" y2="79" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/><text x="85" y="108" font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif">警察署</text></svg>`,
+    fireSymbol: `<svg viewBox="0 0 170 120" xmlns="http://www.w3.org/2000/svg"><g stroke="#334155" stroke-width="5" stroke-linecap="round"><line x1="52" y1="78" x2="118" y2="24"/><line x1="65" y1="89" x2="131" y2="35"/><line x1="69" y1="64" x2="82" y2="75"/><line x1="86" y1="50" x2="99" y2="61"/><line x1="103" y1="36" x2="116" y2="47"/></g><text x="85" y="108" font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif">消防署</text></svg>`,
+    japanRegions: `<svg viewBox="0 0 230 150" xmlns="http://www.w3.org/2000/svg"><path d="M55 112 C85 95 85 78 109 70 C133 62 143 38 171 31" fill="none" stroke="#94a3b8" stroke-width="22" stroke-linecap="round"/><path d="M73 115 C94 101 91 86 113 78" fill="none" stroke="#60a5fa" stroke-width="18" stroke-linecap="round"/><path d="M32 115 C45 105 55 106 70 117" fill="none" stroke="#86efac" stroke-width="14" stroke-linecap="round"/><path d="M174 25 C189 14 205 22 203 39 C200 54 181 55 170 42 Z" fill="#fde68a" stroke="#ca8a04"/><text x="72" y="139" font-size="12" fill="#2563eb" text-anchor="middle" font-family="sans-serif">九州</text><text x="142" y="58" font-size="12" fill="#64748b" font-family="sans-serif">本州</text></svg>`,
+  };
+
+  Object.assign(svgs, {
+    rightAngle: `<svg viewBox="0 0 170 125" xmlns="http://www.w3.org/2000/svg"><line x1="45" y1="95" x2="135" y2="95" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/><line x1="45" y1="95" x2="45" y2="25" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/><path d="M45 72 L68 72 L68 95" fill="none" stroke="#ef4444" stroke-width="2"/><text x="76" y="78" font-size="16" fill="#334155" font-family="sans-serif">90°</text></svg>`,
+    rectangleArea: `<svg viewBox="0 0 210 130" xmlns="http://www.w3.org/2000/svg"><rect x="35" y="25" width="140" height="80" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="105" y="121" font-size="13" fill="#1e3a8a" text-anchor="middle" font-family="sans-serif">横</text><text x="22" y="69" font-size="13" fill="#1e3a8a" text-anchor="middle" font-family="sans-serif">縦</text><text x="105" y="68" font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif">縦×横</text></svg>`,
+    cuboid: `<svg viewBox="0 0 220 155" xmlns="http://www.w3.org/2000/svg"><polygon points="52,48 140,48 170,76 82,76" fill="#dbeafe" stroke="#2563eb"/><polygon points="82,76 170,76 170,125 82,125" fill="#bfdbfe" stroke="#2563eb"/><polygon points="52,48 82,76 82,125 52,97" fill="#e0f2fe" stroke="#2563eb"/><line x1="82" y1="125" x2="170" y2="125" stroke="#1e3a8a"/><text x="126" y="143" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">縦×横×高さ</text></svg>`,
+    percentBar: `<svg viewBox="0 0 220 95" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="30" width="170" height="28" fill="#f8fafc" stroke="#475569"/><rect x="25" y="30" width="68" height="28" fill="#60a5fa"/><text x="59" y="49" font-size="12" fill="#fff" text-anchor="middle" font-family="sans-serif">40%</text><text x="110" y="78" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">全体に対する割合</text></svg>`,
+    speed: `<svg viewBox="0 0 230 110" xmlns="http://www.w3.org/2000/svg"><path d="M28 72 H196" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/><path d="M55 72 H150" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="72" r="8" fill="#2563eb"/><circle cx="150" cy="72" r="8" fill="#2563eb"/><text x="102" y="50" font-size="13" fill="#1e3a8a" text-anchor="middle" font-family="sans-serif">距離</text><text x="102" y="98" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">速さ×時間</text></svg>`,
+    numberLine: `<svg viewBox="0 0 230 90" xmlns="http://www.w3.org/2000/svg"><line x1="25" y1="48" x2="205" y2="48" stroke="#475569" stroke-width="2"/><g stroke="#475569"><line x1="45" y1="40" x2="45" y2="56"/><line x1="85" y1="40" x2="85" y2="56"/><line x1="125" y1="40" x2="125" y2="56"/><line x1="165" y1="40" x2="165" y2="56"/></g><text x="45" y="74" font-size="11" fill="#334155" text-anchor="middle" font-family="sans-serif">0</text><text x="85" y="74" font-size="11" fill="#334155" text-anchor="middle" font-family="sans-serif">1</text><text x="125" y="74" font-size="11" fill="#334155" text-anchor="middle" font-family="sans-serif">2</text><text x="165" y="74" font-size="11" fill="#334155" text-anchor="middle" font-family="sans-serif">3</text></svg>`,
+    moonPhases: `<svg viewBox="0 0 230 105" xmlns="http://www.w3.org/2000/svg"><circle cx="35" cy="50" r="18" fill="#111827"/><circle cx="88" cy="50" r="18" fill="#f8fafc" stroke="#94a3b8"/><path d="M88 32 A18 18 0 0 1 88 68 A10 18 0 0 0 88 32" fill="#111827"/><circle cx="141" cy="50" r="18" fill="#f8fafc" stroke="#94a3b8"/><circle cx="194" cy="50" r="18" fill="#111827"/><path d="M194 32 A18 18 0 0 1 194 68 A10 18 0 0 1 194 32" fill="#f8fafc"/><text x="115" y="93" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">月の満ち欠け</text></svg>`,
+    summerTriangle: `<svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="12" width="184" height="110" rx="8" fill="#0f172a"/><polygon points="70,35 150,48 112,96" fill="none" stroke="#93c5fd" stroke-width="1.5"/><g fill="#fef3c7"><circle cx="70" cy="35" r="4"/><circle cx="150" cy="48" r="4"/><circle cx="112" cy="96" r="4"/></g><text x="58" y="29" font-size="11" fill="#fff" font-family="sans-serif">ベガ</text><text x="156" y="51" font-size="11" fill="#fff" font-family="sans-serif">デネブ</text><text x="118" y="104" font-size="11" fill="#fff" font-family="sans-serif">アルタイル</text></svg>`,
+    circuit: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="35" y="25" width="150" height="70" fill="none" stroke="#475569" stroke-width="3" rx="6"/><circle cx="135" cy="25" r="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><path d="M128 25 L142 25 M135 18 L135 32" stroke="#f59e0b" stroke-width="2"/><line x1="55" y1="45" x2="55" y2="75" stroke="#111827" stroke-width="3"/><line x1="65" y1="50" x2="65" y2="70" stroke="#111827" stroke-width="3"/><text x="110" y="113" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">電気の通り道</text></svg>`,
+    syringe: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="55" y="45" width="100" height="28" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><line x1="30" y1="59" x2="55" y2="59" stroke="#475569" stroke-width="4"/><line x1="155" y1="59" x2="195" y2="59" stroke="#475569" stroke-width="2"/><circle cx="85" cy="58" r="4" fill="#60a5fa"/><circle cx="112" cy="60" r="3" fill="#60a5fa"/><circle cx="135" cy="56" r="3" fill="#60a5fa"/><text x="110" y="104" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">空気・水の体積</text></svg>`,
+    seed: `<svg viewBox="0 0 210 120" xmlns="http://www.w3.org/2000/svg"><ellipse cx="93" cy="62" rx="42" ry="28" fill="#fef3c7" stroke="#ca8a04" stroke-width="2"/><path d="M93 62 C102 52 120 47 138 49" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round"/><path d="M93 62 C83 72 72 86 67 101" fill="none" stroke="#92400e" stroke-width="4" stroke-linecap="round"/><text x="106" y="112" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">発芽</text></svg>`,
+    flower: `<svg viewBox="0 0 210 140" xmlns="http://www.w3.org/2000/svg"><circle cx="105" cy="58" r="14" fill="#facc15"/><g fill="#f9a8d4" stroke="#db2777"><ellipse cx="105" cy="28" rx="16" ry="24"/><ellipse cx="105" cy="88" rx="16" ry="24"/><ellipse cx="75" cy="58" rx="24" ry="16"/><ellipse cx="135" cy="58" rx="24" ry="16"/></g><line x1="105" y1="72" x2="105" y2="125" stroke="#16a34a" stroke-width="5"/><path d="M104 104 C78 88 70 108 92 114" fill="#86efac" stroke="#16a34a"/><text x="105" y="135" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">花・受粉</text></svg>`,
+    river: `<svg viewBox="0 0 230 130" xmlns="http://www.w3.org/2000/svg"><path d="M20 32 C70 12 78 82 125 62 S165 32 210 84" fill="none" stroke="#38bdf8" stroke-width="24" stroke-linecap="round"/><path d="M20 32 C70 12 78 82 125 62 S165 32 210 84" fill="none" stroke="#0284c7" stroke-width="3" stroke-dasharray="8,5"/><text x="70" y="113" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">外側:削る</text><text x="160" y="113" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">内側:積もる</text></svg>`,
+    pendulum: `<svg viewBox="0 0 180 140" xmlns="http://www.w3.org/2000/svg"><line x1="90" y1="18" x2="122" y2="100" stroke="#475569" stroke-width="2"/><circle cx="122" cy="100" r="16" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/><path d="M58 102 A48 48 0 0 0 122 100" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5,4"/><line x1="40" y1="18" x2="140" y2="18" stroke="#334155" stroke-width="4"/><text x="90" y="132" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">ふりこの長さ</text></svg>`,
+    electromagnet: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect x="58" y="50" width="90" height="18" rx="9" fill="#94a3b8"/><path d="M55 59 C65 35 75 83 85 59 S105 35 115 59 S135 83 145 59 S165 35 175 59" fill="none" stroke="#f97316" stroke-width="4"/><text x="70" y="42" font-size="13" fill="#dc2626" font-family="sans-serif">N</text><text x="140" y="42" font-size="13" fill="#2563eb" font-family="sans-serif">S</text><text x="110" y="105" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">コイルと鉄心</text></svg>`,
+    cloud: `<svg viewBox="0 0 220 125" xmlns="http://www.w3.org/2000/svg"><path d="M45 75 C45 58 62 55 70 64 C75 42 105 39 116 61 C130 50 155 58 155 78 C155 93 140 97 123 97 H66 C52 97 45 88 45 75Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/><path d="M75 112 C86 98 96 91 106 78" fill="none" stroke="#60a5fa" stroke-width="3" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"/></marker></defs><text x="112" y="117" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">水蒸気が冷える</text></svg>`,
+    fish: `<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><path d="M55 60 C78 28 135 28 158 60 C135 92 78 92 55 60Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/><path d="M158 60 L195 35 L188 60 L195 85 Z" fill="#93c5fd" stroke="#2563eb" stroke-width="2"/><circle cx="82" cy="52" r="4" fill="#1e3a8a"/><path d="M117 42 L135 30 L129 53" fill="#dbeafe" stroke="#2563eb"/><path d="M118 80 L143 87 L132 68" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="112" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">ひれの形を見る</text></svg>`,
+    combustion: `<svg viewBox="0 0 190 135" xmlns="http://www.w3.org/2000/svg"><rect x="75" y="70" width="28" height="42" fill="#f8fafc" stroke="#475569"/><path d="M89 70 C65 48 84 34 90 18 C98 38 119 48 96 70 Z" fill="#fb923c" stroke="#ea580c" stroke-width="2"/><text x="35" y="34" font-size="13" fill="#2563eb" font-family="sans-serif">酸素</text><text x="111" y="34" font-size="13" fill="#dc2626" font-family="sans-serif">二酸化炭素</text></svg>`,
+    litmus: `<svg viewBox="0 0 220 105" xmlns="http://www.w3.org/2000/svg"><rect x="40" y="34" width="60" height="16" fill="#ef4444"/><path d="M100 42 H160" stroke="#94a3b8" stroke-width="4"/><rect x="160" y="34" width="60" height="16" fill="#2563eb"/><text x="110" y="82" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">リトマス紙の色変化</text></svg>`,
+    lever: `<svg viewBox="0 0 220 125" xmlns="http://www.w3.org/2000/svg"><line x1="35" y1="60" x2="195" y2="60" stroke="#92400e" stroke-width="6" stroke-linecap="round"/><polygon points="110,65 92,105 128,105" fill="#cbd5e1" stroke="#475569"/><circle cx="60" cy="60" r="14" fill="#93c5fd" stroke="#2563eb"/><circle cx="170" cy="60" r="9" fill="#fca5a5" stroke="#dc2626"/><text x="110" y="118" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">重さ×距離</text></svg>`,
+    foodChain: `<svg viewBox="0 0 230 100" xmlns="http://www.w3.org/2000/svg"><g font-size="13" fill="#334155" text-anchor="middle" font-family="sans-serif"><text x="35" y="55">草</text><text x="85" y="55">虫</text><text x="135" y="55">魚</text><text x="185" y="55">鳥</text></g><g stroke="#16a34a" stroke-width="2" marker-end="url(#arr2)"><defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#16a34a"/></marker></defs><line x1="52" y1="50" x2="68" y2="50"/><line x1="102" y1="50" x2="118" y2="50"/><line x1="152" y1="50" x2="168" y2="50"/></g><text x="115" y="86" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">食物連鎖</text></svg>`,
+    timeline: `<svg viewBox="0 0 240 105" xmlns="http://www.w3.org/2000/svg"><line x1="25" y1="55" x2="215" y2="55" stroke="#475569" stroke-width="3"/><g fill="#60a5fa" stroke="#2563eb"><circle cx="45" cy="55" r="7"/><circle cx="85" cy="55" r="7"/><circle cx="125" cy="55" r="7"/><circle cx="165" cy="55" r="7"/><circle cx="205" cy="55" r="7"/></g><text x="45" y="82" font-size="10" fill="#334155" text-anchor="middle" font-family="sans-serif">縄文</text><text x="85" y="82" font-size="10" fill="#334155" text-anchor="middle" font-family="sans-serif">奈良</text><text x="125" y="82" font-size="10" fill="#334155" text-anchor="middle" font-family="sans-serif">鎌倉</text><text x="165" y="82" font-size="10" fill="#334155" text-anchor="middle" font-family="sans-serif">江戸</text><text x="205" y="82" font-size="10" fill="#334155" text-anchor="middle" font-family="sans-serif">昭和</text></svg>`,
+    japanMap: `<svg viewBox="0 0 230 150" xmlns="http://www.w3.org/2000/svg"><path d="M50 112 C80 95 82 78 108 69 C136 59 145 38 174 29" fill="none" stroke="#93c5fd" stroke-width="20" stroke-linecap="round"/><path d="M35 118 C47 105 62 108 72 119" fill="none" stroke="#86efac" stroke-width="14" stroke-linecap="round"/><path d="M178 24 C195 14 210 22 207 42 C203 56 184 56 173 42 Z" fill="#fde68a" stroke="#ca8a04"/><text x="160" y="122" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">日本の地形</text></svg>`,
+    industrialBelt: `<svg viewBox="0 0 240 125" xmlns="http://www.w3.org/2000/svg"><path d="M35 82 C75 72 92 62 122 58 C150 54 174 50 208 39" fill="none" stroke="#94a3b8" stroke-width="18" stroke-linecap="round"/><path d="M62 84 C95 71 125 63 164 52" fill="none" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/><text x="130" y="108" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">太平洋側の工業地域</text></svg>`,
+    trade: `<svg viewBox="0 0 230 120" xmlns="http://www.w3.org/2000/svg"><path d="M25 84 H205" stroke="#38bdf8" stroke-width="8" stroke-linecap="round"/><path d="M58 62 H142 L126 84 H74 Z" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/><rect x="82" y="43" width="36" height="19" fill="#93c5fd" stroke="#2563eb"/><path d="M150 40 C175 45 185 56 193 72" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arr3)"/><defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs><text x="118" y="110" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">輸入・輸出</text></svg>`,
+    constitution: `<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg"><polygon points="110,18 185,104 35,104" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/><text x="110" y="53" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">国民主権</text><text x="78" y="94" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">人権</text><text x="143" y="94" font-size="12" fill="#334155" text-anchor="middle" font-family="sans-serif">平和</text></svg>`,
+  });
+
+  set(mathData[4], "三角形の内角の和は", svgs.triangleAngles);
+  set(mathData[4], "折れ線グラフに適している資料は", svgs.lineGraph);
+  set(mathData[4], "棒グラフに適している資料は", svgs.barGraph);
+  set(mathData[5], "帯グラフで全体を表す帯の長さは", svgs.bandGraph);
+  set(mathData[5], "円グラフで最も割合が大きい部分は", svgs.pieGraph);
+  set(mathData[6], "反比例のグラフの形は", svgs.inverseGraph);
+  set(mathData[6], "縮尺1/20000の地図で2cmの距離は実際に何mか", svgs.scaleMap);
+  set(mathData[6], "縮尺1/25000の地図で4cmは実際に何kmか", svgs.scaleMap);
+
+  set(socialData[4], "地図の上は何方向か", svgs.compass);
+  set(socialData[4], "地図記号で○の中に点があるのは", svgs.cityHallSymbol);
+  set(socialData[4], "地図記号でXのようなマークは", svgs.policeSymbol);
+  set(socialData[4], "地図の縮尺が25000分の1のとき地図上の1cmは実際に何mか", svgs.scaleMap);
+  set(socialData[4], "九州地方に含まれない県は", svgs.japanRegions);
+  set(socialData[4], "消防署の地図記号は", svgs.fireSymbol);
+  set(socialData[4], "警察署の地図記号は", svgs.policeSymbol);
+  set(socialData[4], "日本の都道府県の数は", svgs.japanMap);
+  set(socialData[4], "北海道の県庁所在地は", svgs.japanMap);
+  set(socialData[4], "東京都の隣にない都県は", svgs.japanMap);
+  set(socialData[4], "日本で一番大きい都道府県は", svgs.japanMap);
+  set(socialData[4], "日本で一番小さい都道府県は", svgs.japanMap);
+  set(socialData[4], "琵琶湖がある都道府県は", svgs.japanMap);
+  set(socialData[4], "富士山がある都道府県は（山頂部）", svgs.japanMap);
+  set(socialData[4], "沖縄県の県庁所在地は", svgs.japanMap);
+  set(socialData[4], "東北地方に含まれない県は", svgs.japanMap);
+  set(socialData[4], "日本の主な山脈で東北地方を南北に走るのは", svgs.japanMap);
+  set(socialData[4], "海抜0mより低い土地（ゼロメートル地帯）が多いのは", svgs.japanMap);
+
+  set(mathData[4], "直角は何度か", svgs.rightAngle);
+  set(mathData[4], "四角形の内角の和は", svgs.triangleAngles);
+  set(mathData[4], "縦6cm・横8cmの長方形の面積は", svgs.rectangleArea);
+  set(mathData[4], "縦5cm・横12cmの長方形の面積は", svgs.rectangleArea);
+  set(mathData[4], "1辺7cmの正方形の面積は", svgs.rectangleArea);
+  set(mathData[4], "1辺9cmの正方形の面積は", svgs.rectangleArea);
+  set(mathData[4], "2km500m は何mか", svgs.scaleMap);
+  set(mathData[5], "200の40%は", svgs.percentBar);
+  set(mathData[5], "80は200の何%か", svgs.percentBar);
+  set(mathData[5], "定価1000円の20%引きは", svgs.percentBar);
+  set(mathData[5], "定価2000円の15%引きの値段は", svgs.percentBar);
+  set(mathData[5], "底辺8cm・高さ5cmの三角形の面積は", svgs.triangleAngles);
+  set(mathData[5], "底辺10cm・高さ6cmの平行四辺形の面積は", svgs.rectangleArea);
+  set(mathData[5], "縦3・横4・高さ5cmの直方体の体積は", svgs.cuboid);
+  set(mathData[5], "1辺4cmの立方体の体積は", svgs.cuboid);
+  set(mathData[5], "直方体の体積を求める式は", svgs.cuboid);
+  set(mathData[5], "時速40kmで2時間走った距離は", svgs.speed);
+  set(mathData[5], "6kmを2時間で歩いた速さは", svgs.speed);
+  set(mathData[5], "分速60mは時速何kmか", svgs.speed);
+  set(mathData[5], "120kmを3時間で走る速さは時速何kmか", svgs.speed);
+  set(mathData[5], "時速54kmは秒速何mか", svgs.speed);
+  set(mathData[5], "y=2x で x=5 のとき y=", svgs.lineGraph);
+  set(mathData[5], "比例のグラフの形は", svgs.lineGraph);
+  set(mathData[6], "時速60kmで3時間走った距離は", svgs.speed);
+  set(mathData[6], "秒速5mは時速何kmか", svgs.speed);
+  set(mathData[6], "時速72kmは秒速何mか", svgs.speed);
+  set(mathData[6], "拡大図で辺の長さが3倍になると面積は何倍か", svgs.rectangleArea);
+  set(mathData[6], "1ha（ヘクタール）は何m²か", svgs.rectangleArea);
+  set(mathData[6], "1a（アール）は何m²か", svgs.rectangleArea);
+  set(mathData[6], "240kmを時速80kmで走ると何時間かかるか", svgs.speed);
+  set(mathData[6], "分速50mで30分歩いた距離は", svgs.speed);
+  set(mathData[6], "A・B・Cの3人が1列に並ぶ並び方は何通り", svgs.numberLine);
+  set(mathData[6], "A・B・C・Dの4人から2人選ぶとき何通り", svgs.numberLine);
+  set(mathData[6], "コインを3回投げて表が2回出る確率は", svgs.numberLine);
+  set(mathData[6], "ABCDEの5人から3人選ぶ組み合わせは何通りか", svgs.numberLine);
+
+  set(scienceData[4], "天気予報で「晴れ」の記号は", svgs.compass);
+  set(scienceData[4], "1日の中で気温が最も高くなるのはいつか", svgs.lineGraph);
+  set(scienceData[4], "くもりの日と晴れの日で気温の変化が大きいのは", svgs.lineGraph);
+  set(scienceData[4], "植物の種が芽を出すことを何というか", svgs.seed);
+  set(scienceData[4], "ヘチマなどの植物の花粉を運ぶのは主に", svgs.flower);
+  set(scienceData[4], "植物の花が咲いた後にできるものは", svgs.flower);
+  set(scienceData[4], "人の骨と骨がつながっている部分を何というか", svgs.lever);
+  set(scienceData[4], "腕を曲げるとき縮む筋肉はどこか", svgs.lever);
+  set(scienceData[4], "かん電池・豆電球・スイッチをつないで電気が流れる道を何というか", svgs.circuit);
+  set(scienceData[4], "電池2個を直列につなぐと豆電球は", svgs.circuit);
+  set(scienceData[4], "電流の大きさをはかる道具は", svgs.circuit);
+  set(scienceData[4], "空気を押し縮めると体積は", svgs.syringe);
+  set(scienceData[4], "水を力強く押したとき体積は", svgs.syringe);
+  set(scienceData[4], "注射器に空気を閉じ込めて押すとどうなるか", svgs.syringe);
+  set(scienceData[4], "夏の大三角を構成する星でないのは", svgs.summerTriangle);
+  set(scienceData[4], "月が満月から次の満月になるまでの日数は約", svgs.moonPhases);
+  set(scienceData[4], "夏の大三角形を作る星「ベガ」があるのは", svgs.summerTriangle);
+  set(scienceData[4], "夏に南の空に見える赤い星「アンタレス」があるのは", svgs.summerTriangle);
+  set(scienceData[4], "水を入れた注射器を押したとき体積が変わらない理由は", svgs.syringe);
+  set(scienceData[4], "水が氷になると体積は", svgs.syringe);
+  set(scienceData[4], "水を熱すると100℃で", svgs.syringe);
+  set(scienceData[5], "植物の種が発芽するために必要なものでないものは", svgs.seed);
+  set(scienceData[5], "インゲンマメの種のうち、発芽の養分が入っているのは", svgs.seed);
+  set(scienceData[5], "メダカのオスとメスの違いとして正しいものは", svgs.fish);
+  set(scienceData[5], "川の上流に多い石の特徴は", svgs.river);
+  set(scienceData[5], "川の流れが速いところに多いのは", svgs.river);
+  set(scienceData[5], "雲はどこで作られるか", svgs.cloud);
+  set(scienceData[5], "台風の進路として多いのは", svgs.japanMap);
+  set(scienceData[5], "振り子が1往復する時間が変わるのは何を変えたときか", svgs.pendulum);
+  set(scienceData[5], "電磁石のN極とS極を入れ替えるには", svgs.electromagnet);
+  set(scienceData[5], "電磁石を強くする方法でないものは", svgs.electromagnet);
+  set(scienceData[5], "花粉を運ぶ役目をする生き物は", svgs.flower);
+  set(scienceData[5], "受粉後に果実になる部分は", svgs.flower);
+  set(scienceData[5], "川が曲がっているとき削れるのはどちら側か", svgs.river);
+  set(scienceData[5], "土砂が積もることを何というか", svgs.river);
+  set(scienceData[5], "川が平野に出ると流れは", svgs.river);
+  set(scienceData[5], "食塩水を蒸発させると最後に残るのは", svgs.syringe);
+  set(scienceData[5], "光合成で植物が吸収するものは", svgs.flower);
+  set(scienceData[5], "光合成で植物が放出するものは", svgs.flower);
+  set(scienceData[5], "植物の葉に日光が当たると作られるものは", svgs.flower);
+  set(scienceData[5], "振り子の長さを4倍にすると1往復の時間は", svgs.pendulum);
+  set(scienceData[5], "振り子のおもりを重くすると1往復の時間は", svgs.pendulum);
+  set(scienceData[5], "コイルの巻き数を2倍にすると電磁石の力は", svgs.electromagnet);
+  set(scienceData[5], "電磁石と永久磁石の違いは", svgs.electromagnet);
+  set(scienceData[6], "ものが燃えるために必要なものは", svgs.combustion);
+  set(scienceData[6], "ものが燃えた後に増える気体は", svgs.combustion);
+  set(scienceData[6], "二酸化炭素を石灰水に通すと", svgs.syringe);
+  set(scienceData[6], "でんぷんにヨウ素液をつけると", svgs.flower);
+  set(scienceData[6], "植物が光を受けて養分を作るはたらきを", svgs.flower);
+  set(scienceData[6], "植物が葉から水を蒸発させるはたらきを", svgs.flower);
+  set(scienceData[6], "食べ物を消化する器官の順序として正しいのは", svgs.foodChain);
+  set(scienceData[6], "地層をつくる岩石のうち、火山からできたものは", svgs.japanMap);
+  set(scienceData[6], "月が自ら光っていないことを示す理由は", svgs.moonPhases);
+  set(scienceData[6], "月の形が変わって見えるのはなぜか", svgs.moonPhases);
+  set(scienceData[6], "発電機でコイルを速く回すと電流は", svgs.electromagnet);
+  set(scienceData[6], "コンデンサーにためた電気の利用例は", svgs.circuit);
+  set(scienceData[6], "水よう液を赤色リトマス紙につけると青くなる。この水よう液は", svgs.litmus);
+  set(scienceData[6], "中和とは何か", svgs.litmus);
+  set(scienceData[6], "てこが水平になるための条件は", svgs.lever);
+  set(scienceData[6], "てこで力点を支点に近づけると", svgs.lever);
+  set(scienceData[6], "生き物どうしの「食う食われる」の関係を", svgs.foodChain);
+  set(scienceData[6], "ものが燃えるのに必要な条件は", svgs.combustion);
+  set(scienceData[6], "ろうそくを燃やし続けるには", svgs.combustion);
+  set(scienceData[6], "酸素の中でものを燃やすと空気中より", svgs.combustion);
+  set(scienceData[6], "気孔はどこにあるか", svgs.flower);
+  set(scienceData[6], "植物の体の中で水が通る管を何というか", svgs.flower);
+  set(scienceData[6], "植物の体の中で養分（砂糖）が通る管は", svgs.flower);
+  set(scienceData[6], "満月が見えるのはどのときか", svgs.moonPhases);
+  set(scienceData[6], "日食が起こるのはどのときか", svgs.moonPhases);
+  set(scienceData[6], "光電池（太陽電池）に強い光を当てると", svgs.circuit);
+  set(scienceData[6], "手回し発電機を速く回すと", svgs.electromagnet);
+  set(scienceData[6], "酸性の水溶液をBTB液に加えると何色になるか", svgs.litmus);
+  set(scienceData[6], "てこの「作用点」とは", svgs.lever);
+  set(scienceData[6], "てこで力点を支点から遠ざけると", svgs.lever);
+
+  set(socialData[5], "日本の農業で最も多く生産されている作物は", svgs.japanMap);
+  set(socialData[5], "日本の漁業で生産量が多い漁業の種類は", svgs.trade);
+  set(socialData[5], "日本の工業地帯で最大の生産額を誇るのは", svgs.industrialBelt);
+  set(socialData[5], "自動車工業が特に盛んな都市はどれか", svgs.industrialBelt);
+  set(socialData[5], "日本の国土の約何割が山地・丘陵地か", svgs.japanMap);
+  set(socialData[5], "日本最長の川はどれか", svgs.japanMap);
+  set(socialData[5], "日本の人口が集中している地域はどこか", svgs.industrialBelt);
+  set(socialData[5], "日本が多く輸出しているものはどれか", svgs.trade);
+  set(socialData[5], "日本が最も多く石油を輸入している地域は", svgs.trade);
+  set(socialData[5], "日本が輸入に頼っている資源として正しいのは", svgs.trade);
+  set(socialData[5], "日本で米の生産量が最も多い地方はどこか", svgs.japanMap);
+  set(socialData[5], "日本近海で暖流と寒流がぶつかる「潮目」に魚が多い理由は", svgs.japanMap);
+  set(socialData[5], "日本の工業地帯で最も生産額が大きいのは", svgs.industrialBelt);
+  set(socialData[5], "中京工業地帯で特に盛んな工業はどれか", svgs.industrialBelt);
+  set(socialData[6], "縄文時代の人々の主な食料の得方は", svgs.timeline);
+  set(socialData[6], "弥生時代に日本に広まった農業は", svgs.timeline);
+  set(socialData[6], "聖徳太子が制定した十七条の憲法の目的は", svgs.timeline);
+  set(socialData[6], "奈良時代に建てられた世界最大の木造建築は", svgs.timeline);
+  set(socialData[6], "鎌倉幕府を開いた人物は", svgs.timeline);
+  set(socialData[6], "室町幕府を開いた人物は", svgs.timeline);
+  set(socialData[6], "江戸幕府の参勤交代の目的は", svgs.timeline);
+  set(socialData[6], "明治時代に日本が中国（清）と戦った戦争は", svgs.timeline);
+  set(socialData[6], "1945年に日本が戦争を終えるきっかけになったのは", svgs.timeline);
+  set(socialData[6], "日本国憲法が公布された年は", svgs.constitution);
+  set(socialData[6], "日本国憲法の三原則に含まれないものは", svgs.constitution);
+  set(socialData[6], "国際連合（国連）の主な目的は", svgs.trade);
+  set(socialData[6], "飛鳥時代に遣隋使として中国に送られた人物は", svgs.timeline);
+  set(socialData[6], "日露戦争（1904〜05年）の講和条約は", svgs.timeline);
+  set(socialData[6], "日本が国際連合に加盟した年は", svgs.trade);
+}
+addQuestionVisuals();
+
+
+// ================================================================
+// ===== 学習指導要領に沿った追加問題 =====
+// ================================================================
+function addCurriculumQuestions() {
+  const add = (items, additions, key = 'q') => {
+    const used = new Set(items.map(v => v[key]));
+    for (const item of additions) {
+      if (!used.has(item[key])) {
+        items.push(item);
+        used.add(item[key]);
+      }
+    }
+  };
+
+  add(kanjiData[4], [
+    {word:"改良",reading:"かいりょう",hint:"道具を___する"},
+    {word:"救急",reading:"きゅうきゅう",hint:"___車を呼ぶ"},
+    {word:"郡部",reading:"ぐんぶ",hint:"都市部と___"},
+    {word:"史料",reading:"しりょう",hint:"昔の___を調べる"},
+  ], 'word');
+  add(kanjiData[5], [
+    {word:"衛生",reading:"えいせい",hint:"___に気をつける"},
+    {word:"講義",reading:"こうぎ",hint:"先生の___を聞く"},
+    {word:"災害",reading:"さいがい",hint:"自然___に備える"},
+    {word:"輸送",reading:"ゆそう",hint:"荷物を___する"},
+  ], 'word');
+  add(kanjiData[6], [
+    {word:"宇宙",reading:"うちゅう",hint:"___飛行士にあこがれる"},
+    {word:"憲法",reading:"けんぽう",hint:"日本国___を学ぶ"},
+    {word:"磁石",reading:"じしゃく",hint:"___が鉄を引きつける"},
+    {word:"蒸発",reading:"じょうはつ",hint:"水が___する"},
+    {word:"警備",reading:"けいび",hint:"会場を___する"},
+    {word:"納税",reading:"のうぜい",hint:"国民の___の義務"},
+    {word:"郵便",reading:"ゆうびん",hint:"___局へ行く"},
+  ], 'word');
+
+  add(mathData[4], [
+    {q:"1億を10こ集めた数は",a:"10億",w:["1兆","100億","1000万"],cat:"大きな数",e:"1億が10こで10億です。億より大きい数も位を意識して考えます。"},
+    {q:"0.25 + 0.4 =",a:"0.65",w:["0.29","0.45","0.625"],cat:"小数の計算",e:"小数点をそろえて計算します。0.25+0.40=0.65です。"},
+    {q:"2/7 + 3/7 =",a:"5/7",w:["5/14","1/7","6/7"],cat:"分数",e:"分母が同じ分数のたし算は、分子だけを足します。"},
+    {q:"180度より大きく360度より小さい角を何というか",a:"優角",w:["直角","鋭角","平角"],cat:"角の大きさ",e:"180度より大きく360度より小さい角を優角といいます。"},
+  ]);
+  add(mathData[5], [
+    {q:"18と24の最大公約数は",a:"6",w:["3","12","72"],cat:"倍数・約数",e:"18の約数と24の約数に共通する最大の数は6です。"},
+    {q:"2.5 × 0.4 =",a:"1",w:["0.1","10","2.9"],cat:"小数の計算",e:"25×4=100。小数点を2けた戻して1です。"},
+    {q:"底辺14cm・高さ6cmの三角形の面積は",a:"42cm²",w:["84cm²","20cm²","48cm²"],cat:"面積",e:"三角形の面積は底辺×高さ÷2。14×6÷2=42です。"},
+    {q:"平均が12で6個のデータの合計は",a:"72",w:["18","60","2"],cat:"平均",e:"合計=平均×個数。12×6=72です。"},
+  ]);
+  add(mathData[6], [
+    {q:"3/5 ÷ 9/10 =",a:"2/3",w:["27/50","3/2","1/3"],cat:"分数のわり算",e:"割る数を逆数にして、3/5×10/9=30/45=2/3です。"},
+    {q:"比 3:7 の全体が50のとき3の部分は",a:"15",w:["21","30","10"],cat:"比",e:"全体は3+7=10。50÷10×3=15です。"},
+    {q:"半径8cmの円の面積（π=3.14）は",a:"200.96cm²",w:["50.24cm²","100.48cm²","401.92cm²"],cat:"円",e:"円の面積は半径×半径×π。8×8×3.14=200.96です。"},
+    {q:"yはxに比例し、x=4でy=20。x=7のときy=",a:"35",w:["28","40","80"],cat:"比例・反比例",e:"y=5xです。x=7ならy=35です。"},
+  ]);
+
+  add(scienceData[4], [
+    {q:"水は冷やされて0℃になるとどうなるか",a:"氷になる",w:["水蒸気になる","食塩になる","なくなる"],cat:"ものの体積",e:"水は0℃でこおり始め、氷になると体積が大きくなります。"},
+    {q:"金ぞくの玉を熱すると輪を通りにくくなるのはなぜか",a:"体積が大きくなるから",w:["重さがなくなるから","色が変わるから","磁石になるから"],cat:"ものの体積",e:"金属は温めると体積が大きくなります。"},
+    {q:"星は時間がたつとどのように見えるか",a:"東から西へ動くように見える",w:["西から東へ動く","同じ場所に止まる","南から北へ落ちる"],cat:"星と月",e:"地球が自転しているため、星は東から西へ動くように見えます。"},
+    {q:"乾電池の向きを反対にするとモーターの回り方は",a:"反対向きになる",w:["必ず止まる","速くなるだけ","明るくなる"],cat:"電気のはたらき",e:"電流の向きが変わると、モーターの回る向きも変わります。"},
+  ]);
+  add(scienceData[5], [
+    {q:"種子の発芽に必要な3つの条件は",a:"水・空気・適切な温度",w:["水・光・肥料","土・光・肥料","空気・日光・土"],cat:"植物の発芽",e:"発芽には水、空気、適切な温度が必要です。光や肥料は発芽そのものには必ずしも必要ではありません。"},
+    {q:"流れる水が土地を削るはたらきを何というか",a:"侵食",w:["堆積","蒸発","受粉"],cat:"流水のはたらき",e:"川の水が地面や川岸を削るはたらきを侵食といいます。"},
+    {q:"電磁石の力を強くする方法は",a:"コイルの巻き数を増やす",w:["鉄心を抜く","電流を弱くする","導線を切る"],cat:"電流と電磁石",e:"電磁石はコイルの巻き数を増やしたり、電流を強くしたりすると強くなります。"},
+    {q:"天気の変化を調べるとき雲の動きで見るものは",a:"雲が移動する方向",w:["雲の味","雲の重さ","雲の名前だけ"],cat:"天気の変化",e:"日本付近では天気が西から東へ変わりやすいため、雲の動きが手がかりになります。"},
+  ]);
+  add(scienceData[6], [
+    {q:"ろうそくが燃えるとき使われる気体は",a:"酸素",w:["窒素","水素","ヘリウム"],cat:"ものの燃え方",e:"ものが燃えるには酸素が必要です。燃えた後は二酸化炭素が増えます。"},
+    {q:"葉で作られたでんぷんは主に何に変えられて運ばれるか",a:"糖",w:["石灰水","塩酸","鉄"],cat:"植物の体",e:"葉で作られたでんぷんは水に溶けやすい糖に変えられ、体全体へ運ばれます。"},
+    {q:"塩酸にアルミニウムを入れると発生する気体は",a:"水素",w:["酸素","窒素","二酸化炭素"],cat:"水よう液の性質",e:"塩酸にアルミニウムや鉄を入れると、水素が発生します。"},
+    {q:"月食が起こるのはどのようなときか",a:"月が地球の影に入るとき",w:["月が太陽をかくすとき","太陽が地球の影に入るとき","月が自ら光るとき"],cat:"月と太陽",e:"月食は、太陽・地球・月がほぼ一直線に並び、月が地球の影に入ると起こります。"},
+  ]);
+
+  add(socialData[4], [
+    {q:"ごみを減らすための3Rに含まれないものは",a:"リッチ",w:["リデュース","リユース","リサイクル"],cat:"くらしと環境",e:"3Rはリデュース、リユース、リサイクルです。"},
+    {q:"水道の水は主にどこできれいにされるか",a:"浄水場",w:["消防署","警察署","発電所"],cat:"くらしと環境",e:"川やダムの水は浄水場できれいにされ、家庭へ送られます。"},
+    {q:"地震に備えて地域で確認しておく場所は",a:"避難場所",w:["遊園地","映画館","空港"],cat:"くらしと安全",e:"災害に備えて、避難場所や避難経路を確認しておくことが大切です。"},
+    {q:"地図で土地の高さを表す線を何というか",a:"等高線",w:["赤道","経線","境界線"],cat:"地図の見方",e:"等高線は同じ高さの地点を結んだ線で、土地の高低や傾きを読み取れます。"},
+  ]);
+  add(socialData[5], [
+    {q:"米作りで田に水を入れて育てる農業を何というか",a:"稲作",w:["畜産","林業","工業"],cat:"農業",e:"米は水田で育てる稲作によって生産されます。"},
+    {q:"工業製品を作る工場が集まりやすい臨海部の利点は",a:"原料や製品を船で運びやすい",w:["雪が多い","山が高い","水が少ない"],cat:"工業",e:"臨海部は港を使って原料や製品を大量に運びやすい利点があります。"},
+    {q:"情報を正しく使うために大切なことは",a:"出どころや正しさを確かめる",w:["うわさをすぐ広める","題名だけで判断する","古い情報だけ使う"],cat:"運輸・通信",e:"情報化社会では、情報の出どころや新しさ、正しさを確かめることが大切です。"},
+    {q:"森林が果たす役割として正しいものは",a:"水をたくわえ土砂災害を防ぐ",w:["雨をすべて止める","海を作る","地震をなくす"],cat:"環境",e:"森林には水をたくわえる、土砂の流出を防ぐ、二酸化炭素を吸収するなどの役割があります。"},
+  ]);
+  add(socialData[6], [
+    {q:"大昔の人々のくらしを知る手がかりになるものは",a:"土器や石器",w:["テレビ番組","交通標識","電気製品"],cat:"縄文・弥生",e:"土器や石器、住居跡などの遺跡・遺物から昔のくらしを調べます。"},
+    {q:"明治政府が藩を廃止して県を置いた改革は",a:"廃藩置県",w:["参勤交代","刀狩り","御成敗式目"],cat:"明治",e:"廃藩置県により、全国を政府が直接治める仕組みに変えました。"},
+    {q:"国会の主な仕事は",a:"法律を作ること",w:["裁判をすること","学校だけを作ること","天気を予報すること"],cat:"現代",e:"国会は国民の代表が集まり、法律や予算などを決める機関です。"},
+    {q:"選挙で代表を選ぶことが関係する考え方は",a:"民主政治",w:["鎖国","年貢","参勤交代"],cat:"現代",e:"民主政治では、国民が選挙などを通して政治に参加します。"},
+  ]);
+
+  add(japaneseData[4], [
+    {q:"「しかし」と同じように前の内容と反対の内容をつなぐ言葉は",a:"けれども",w:["そして","だから","たとえば"],cat:"文法",e:"「しかし」「けれども」は逆接の接続語です。"},
+    {q:"説明文を読むときにまず注目するとよいものは",a:"段落ごとの中心文",w:["文字の色だけ","ページ番号","作者の年齢"],cat:"読解",e:"説明文では段落ごとの中心文を見つけると内容を整理しやすくなります。"},
+    {q:"漢字の部首「ごんべん（言）」に関係する意味は",a:"言葉に関係する",w:["水に関係する","火に関係する","動物に関係する"],cat:"漢字",e:"話・語・読・説など、言葉に関係する漢字に使われます。"},
+    {q:"文の終わりに気持ちを強く表すときに使う記号は",a:"！",w:["、","。","「"],cat:"文法",e:"感動や強い気持ちを表すときは感嘆符を使うことがあります。"},
+  ]);
+  add(japaneseData[5], [
+    {q:"事実と意見を区別するとき、意見に当たるものは",a:"私は便利だと思う",w:["気温は20度だった","参加者は30人だった","駅は午前9時に開いた"],cat:"読解",e:"意見は書き手の考えや判断を表します。"},
+    {q:"敬語で相手の動作を高める言い方は",a:"尊敬語",w:["謙譲語","丁寧語","方言"],cat:"敬語",e:"尊敬語は相手の動作を高める敬語です。"},
+    {q:"文章の構成で、初めに問題を示し、後で理由や例を述べる形は",a:"序論・本論・結論",w:["起承転結だけ","五七五","会話文"],cat:"文章表現",e:"説明文や意見文では、序論・本論・結論を意識すると分かりやすくなります。"},
+    {q:"「雨のように涙が落ちた」の表現技法は",a:"直喩",w:["倒置法","体言止め","反復"],cat:"文章表現",e:"「〜のように」を使ってたとえる表現を直喩といいます。"},
+  ]);
+  add(japaneseData[6], [
+    {q:"複数の資料を読むときに大切なことは",a:"共通点と違いを比べる",w:["一つだけ信じる","題名を読まない","数字を無視する"],cat:"読解",e:"資料を比べると、情報の関係や違いが分かりやすくなります。"},
+    {q:"意見文で自分の考えを支えるものとして適切なのは",a:"理由や具体例",w:["関係ない話","文字数だけ","読点の数"],cat:"文章表現",e:"意見文では理由や具体例を示すと説得力が増します。"},
+    {q:"「拝見する」は何の敬語か",a:"謙譲語",w:["尊敬語","丁寧語","美化語"],cat:"敬語",e:"「拝見する」は自分が見ることをへりくだって言う謙譲語です。"},
+    {q:"短歌の基本的な音数は",a:"五・七・五・七・七",w:["五・七・五","七・五・七","五・五・七"],cat:"文学",e:"短歌は五・七・五・七・七の三十一音が基本です。"},
+  ]);
+
+  add(englishData[4], [
+    {q:"「私は犬が好きです」を英語で言うと",a:"I like dogs.",w:["I am dogs.","I have dog?","Dogs like I."],cat:"表現",e:"I like ... で「私は〜が好きです」を表します。"},
+    {q:"「何色が好きですか」はどれか",a:"What color do you like?",w:["How old are you?","What time is it?","Where is color?"],cat:"表現",e:"What color do you like? は好きな色をたずねる表現です。"},
+    {q:"「火曜日」は英語で",a:"Tuesday",w:["Thursday","Sunday","Friday"],cat:"曜日",e:"Tuesday は火曜日です。Thursday（木曜日）と似ているので注意します。"},
+    {q:"「20」は英語で",a:"twenty",w:["twelve","two","thirteen"],cat:"数",e:"twenty は20です。twelve は12です。"},
+  ]);
+  add(englishData[5], [
+    {q:"「私はピアノを弾けます」はどれか",a:"I can play the piano.",w:["I am piano.","I like can piano.","Piano can I."],cat:"表現",e:"I can ... で「私は〜できます」を表します。"},
+    {q:"「あなたの誕生日はいつですか」はどれか",a:"When is your birthday?",w:["Where is your birthday?","What color is birthday?","How many birthday?"],cat:"表現",e:"When は「いつ」をたずねる言葉です。"},
+    {q:"「理科」を英語で",a:"science",w:["social studies","music","math"],cat:"教科",e:"science は理科です。social studies は社会です。"},
+    {q:"「道案内で『右に曲がって』」はどれか",a:"Turn right.",w:["Go left.","Stop lunch.","Right color."],cat:"道案内",e:"Turn right. は右に曲がって、Turn left. は左に曲がってです。"},
+  ]);
+  add(englishData[6], [
+    {q:"「私は京都に行きたいです」はどれか",a:"I want to go to Kyoto.",w:["I go want Kyoto.","I am Kyoto.","Kyoto wants me."],cat:"表現",e:"I want to ... で「私は〜したいです」を表します。"},
+    {q:"「昨日」を英語で",a:"yesterday",w:["tomorrow","today","morning"],cat:"時",e:"yesterday は昨日、today は今日、tomorrow は明日です。"},
+    {q:"「私は昨日サッカーをしました」はどれか",a:"I played soccer yesterday.",w:["I play soccer tomorrow.","I playing soccer yesterday.","I soccer played tomorrow."],cat:"表現",e:"過去のことは played のように動詞を過去形にします。"},
+    {q:"「将来、先生になりたいです」はどれか",a:"I want to be a teacher.",w:["I am be teacher.","Teacher want I.","I can teacher yesterday."],cat:"将来",e:"I want to be ... で「〜になりたいです」を表します。"},
+  ]);
+}
+addCurriculumQuestions();
+
+addQuestionVisuals();
+function makeVisualsUniquePerQuestion() {
+  const allGroups = [
+    mathData[4], mathData[5], mathData[6],
+    scienceData[4], scienceData[5], scienceData[6],
+    socialData[4], socialData[5], socialData[6],
+    japaneseData[4], japaneseData[5], japaneseData[6],
+    englishData[4], englishData[5], englishData[6],
+  ];
+  const accents = ["#ef4444", "#0ea5e9", "#16a34a", "#f59e0b", "#8b5cf6", "#14b8a6", "#e11d48", "#64748b"];
+  const shortText = (text) => String(text || "")
+    .replace(/[<>&]/g, "")
+    .replace(/[「」『』（）()]/g, "")
+    .slice(0, 13);
+  const addVariantMark = (svg, question, variantIndex) => {
+    const color = accents[variantIndex % accents.length];
+    const label = shortText(question.q || question.word || question.cat || "問題");
+    const shape = variantIndex % 4;
+    const marker = [
+      `<circle cx="208" cy="18" r="10" fill="${color}" opacity="0.95"/><text x="208" y="22" font-size="11" fill="#fff" text-anchor="middle" font-family="sans-serif">${variantIndex + 1}</text>`,
+      `<rect x="194" y="8" width="28" height="20" rx="4" fill="${color}" opacity="0.95"/><text x="208" y="22" font-size="11" fill="#fff" text-anchor="middle" font-family="sans-serif">${variantIndex + 1}</text>`,
+      `<path d="M196 8 L222 18 L196 28 Z" fill="${color}" opacity="0.95"/><text x="205" y="22" font-size="10" fill="#fff" text-anchor="middle" font-family="sans-serif">${variantIndex + 1}</text>`,
+      `<polygon points="208,6 222,18 208,30 194,18" fill="${color}" opacity="0.95"/><text x="208" y="22" font-size="10" fill="#fff" text-anchor="middle" font-family="sans-serif">${variantIndex + 1}</text>`,
+    ][shape];
+    const note = `<g class="unique-visual-note"><rect x="8" y="6" width="132" height="21" rx="4" fill="#ffffff" opacity="0.9" stroke="${color}" stroke-width="1"/><text x="14" y="21" font-size="11" fill="#334155" font-family="sans-serif">${label}</text>${marker}<path d="M24 ${88 + (variantIndex % 3) * 8} C58 ${68 + (variantIndex % 5) * 7}, 98 ${105 - (variantIndex % 4) * 9}, 136 ${76 + (variantIndex % 6) * 6}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.75"/></g>`;
+    return svg.replace("</svg>", `${note}</svg>`);
+  };
+  for (const group of allGroups) {
+    if (!Array.isArray(group)) continue;
+    const seen = new Map();
+    group.forEach((question) => {
+      if (!question || !question.svg) return;
+      const original = question.svg;
+      const count = seen.get(original) || 0;
+      if (count > 0) question.svg = addVariantMark(original, question, count);
+      seen.set(original, count + 1);
+    });
+  }
+}
+makeVisualsUniquePerQuestion();
 // ===== 類似漢字マップ（書きテスト用）=====
 // ================================================================
 const visualSimilar = {
@@ -1685,3 +2084,5 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
 </body>
 </html>
+
+
